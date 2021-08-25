@@ -1,0 +1,25 @@
+kafka:
+  in_raw:
+    topic: sx.smev.aggredator.request
+    envelope_elements:
+      - orderId
+  out:
+    topic: smev.out
+    extra_body_fields:
+      - payload/data_request/order_id
+    extra_headers_fields:
+      - message_id
+services:
+  smev3:
+    db_url: postgresql://postgres:otrtest@db:5432/aggredator-service-smev3
+  incomings:
+    epgu-child-allowance:
+      db_url: postgres://postgres:otrtest@db:5432/aggredator-service-epgu-child-allowance
+      extra_fields:
+        - data_request/order_id # search in response or metadata # возможно лучше использовать json pointer
+  requests:
+    zags-inform:
+      db_url: postgres://postgres:otrtest@db:5432/aggredator-service-zags-inform
+      extra_fields:
+        - ags_type
+        - request_id
