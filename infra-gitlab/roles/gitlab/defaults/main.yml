@@ -1,0 +1,9 @@
+---
+
+# defaults file for cron_backup
+cron_backup_minutes: "0"
+cron_backup_hours: "0"
+cron_backup_days: "*"
+cron_backup_months: "*"
+cron_backup_weekdays: "*"
+

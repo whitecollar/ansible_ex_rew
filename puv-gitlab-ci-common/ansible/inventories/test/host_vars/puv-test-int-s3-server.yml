@@ -1,0 +1,7 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/s3-app
+deploy_name: s3-app
+deploy_ports: 8080:8080
+deploy_volumes: "{{ app_dir }}/logs/:/app/log"
+psql_db_name: "s3"

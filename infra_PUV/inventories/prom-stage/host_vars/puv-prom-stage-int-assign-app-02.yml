@@ -1,0 +1,15 @@
+---
+
+artifacts_name: assign
+artifacts_name_2: assign-ufos
+
+env_port: 18080
+env_port_2: 18081
+
+db_login: puv
+db_password: Oracle33
+
+db_ufos_host_prop: "jdbc:postgresql://puv-prom-stage-int-assign-db-02:5432/assign_bos"
+
+XMX: 4096m
+JAVA_ARGS: ""

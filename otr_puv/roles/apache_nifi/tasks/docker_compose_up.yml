@@ -1,0 +1,49 @@
+---
+
+- name: Docker Images | Log into private registry and force re-authorization
+  docker_login:
+    registry: "{{ deploy_registry_url }}"
+    username: "{{ deploy_registry_user }}"
+    password: "{{ deploy_registry_pass }}"
+    reauthorize: true
+  no_log: false
+  changed_when: false
+  ignore_errors: yes
+
+#  Запуск сервисf через docker-compose
+- name: Docker Compose Up | Docker compose up
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    remove_orphans: true
+    state: present
+    pull: yes
+  register: images_pull_result
+
+- name: Install | Docker compose up
+  shell: /bin/bash -c 'cd {{ app_dir }}/ && /usr/local/bin/docker-compose up -d'
+
+# Необходимо запускать скрипт после старта контейнеров, это запустит само приложение, по сути.
+# Ждём 10 минут, пока не запустятся приложения в контейнерах.
+# Обсудить с Кусковым Романом возможность проверки условий, вместо тупого слипа на 10 минут
+- name: Docker Compose Up | Sleep for 600 seconds
+  wait_for:
+    timeout: 600
+  delegate_to: localhost
+  when: images_pull_result.changed
+
+# Разобраться с дополнительными модулями для ансибла, добавить их в докерфайл ранера.
+# https://dpr-gitlab.otr.ru/admins/dockerfiles/-/tree/master/ansible
+# Пока что не работает, запускается руками Кусковым Романом.
+# Разобраться и научиься запускать.
+- name: Docker Compose UP | Script for init nifi
+  shell: "docker exec -ti {{ deploy_name }} /opt/nifi/puv-integration-flows/init_nifi.sh -t /opt/nifi/nifi-toolkit-current --nifi-url {{ nifi_url }} --registry-url {{ nifi_registry_url }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: images_pull_result.changed
+
+
+
+# Удаляем все не нужные изображения, игнорируем здесь ошибки, если на хост первый раз заливается изображение.
+# Из-за старой версии API докера нельзя использовать модуль docker_prune, поэтому этот процесс организован так.
+- name: Docker Prune | Clean up
+  shell: docker rmi $(docker images -f dangling=true -q)
+  ignore_errors: yes 

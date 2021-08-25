@@ -1,0 +1,20 @@
+---
+
+- include: docker-images.yml
+- include: docker-compose-up.yml
+  tags:
+    - first 
+    - second
+    - front
+    - nifi
+- include: docker-compose-up-fias.yml
+  tags:
+    - fias
+- include: misc.yml
+- include: docker-prune.yml
+  tags:
+    - first 
+    - second
+    - front
+    - nifi
+    

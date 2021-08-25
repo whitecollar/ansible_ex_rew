@@ -1,0 +1,62 @@
+version: "2"
+services:
+  swagger-editor:
+    image: swaggerapi/swagger-editor
+    container_name: "swagger-editor"
+    ports:
+      - "8081:8080"
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./swagger/openapi.json:/openapi.json
+    environment:
+      SWAGGER_JSON: /openapi.json
+      # API_URL: ""
+
+  swagger-api:
+    image: danielgtaylor/apisprout
+    container_name: "swagger-api"
+    ports:
+      - "8083:8000"
+    volumes:
+      - ./swagger/openapi.json:/openapi.json
+    command: /openapi.json
+    networks:
+      dpr-swagger-net:
+        aliases:
+          - local.swagger.apisprout
+
+  swagger-nginx:
+    image: nginx:mainline-alpine
+    container_name: "swagger-nginx"
+    ports:
+      - "8084:8084"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      dpr-swagger-net:
+        aliases:
+          - local.swagger.api
+
+#networks:
+#  dpr-swagger-net:
+#    external: true
+
+networks:
+    dpr-swagger-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.10.10.0/24
+              gateway: 10.10.10.1
+

@@ -1,0 +1,15 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/category-docs-indexer
+deploy_name: category-docs-indexer
+deploy_ports:
+  - 8080:8080
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"
+
+deploy_registry_image_2: registry-dpr-gitlab.otr.ru:5005/puv/eld-category-docs
+deploy_name_2: eld-category-docs
+deploy_ports_2:
+  - 9080:8080
+deploy_volumes_2:
+  - "{{ app_dir }}/logs/:/app/log"

@@ -1,0 +1,89 @@
+---
+
+# Создаём рабочую директорию
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}"
+    owner: root
+    group: root
+
+# Создаём рабочую директорию для postgres
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres"
+    owner: root
+    group: root
+
+# Создаём директорию для переменных
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/.env"
+    owner: root
+    group: root
+
+# Создаём рабочую директорию конфиг файлов
+- name: Configure | Create config dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres/configs"
+    owner: root
+    group: root
+
+# Создаём рабочую директорию лог файлов
+- name: Configure | Create logs dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres/logs" 
+    mode: 0777
+
+#  Создаем файл лога для pgbouncer, так как он не стартует без него, туда пишется инфа о всех коннектах
+- name: Configure | Create log file
+  copy:
+    content: ""
+    dest: "{{ app_dir }}/postgres/pgbouncer_connection.log"
+    force: no
+    mode: 0777
+
+#  Копируем конфиг pgbouncer
+- name: Configure | Copy pgbouncer config
+  template:
+    src: "pgbouncer.ini.j2"
+    dest: "{{ app_dir }}/postgres/configs/pgbouncer.ini"
+
+#  Копируем список разрешенных пользователй на подключение через pgbouncer
+- name: Configure | Copy userlist.txt
+  template:
+    src: "userlist.txt.j2"
+    dest: "{{ app_dir }}/postgres/configs/userlist.txt"
+
+#  Копируем файл docker-compose.yml для запуска сервисов
+- name: Configure | Copy docker-compose.yml file
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ app_dir }}/docker-compose.yml"
+
+#  Копируем конфиг pg_hba 
+- name: Configure | Configure pg_hba.conf file
+  template:
+    src: "pg_hba.conf.j2"
+    dest: "{{ app_dir }}/postgres/configs/pg_hba.conf"
+
+
+- name: Configure | Copy env app file
+  template:
+    src: "env/app.env.j2"
+    dest: "{{ app_dir }}/.env/app.env"
+
+- name: Configure | Copy env app 2 file
+  template:
+    src: "env/app_2.env.j2"
+    dest: "{{ app_dir }}/.env/app_2.env"
+
+#  Копируем скрипт которйы создает нужных пользователей для pgbouncer
+- name: Configure | gen_userlist.sh
+  copy:
+    src: "gen_userlist.sh"
+    dest: "{{ app_dir }}/postgres/gen_userlist.sh"

@@ -1,0 +1,21 @@
+---
+
+# Останавливаем контейнер.
+- name: Docker Update | Stop a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    state: stopped
+    timeout: 600
+
+# Удаляем контейнер.
+- name: Docker Update | Delete a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    state: absent
+    timeout: 600
+
+#  Запуск сервисов через docker-compose
+- name: Docker compose up | Docker compose up
+  shell: "docker-compose up -d"
+  args:
+    chdir: "{{ app_dir }}"

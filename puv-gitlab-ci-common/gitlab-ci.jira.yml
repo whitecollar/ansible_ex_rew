@@ -1,0 +1,74 @@
+stages:
+  - jira-transition
+
+.jira-transition:
+  stage: jira-transition
+  rules:
+    - if: '$CI_COMMIT_TAG != ""'
+      when: never
+  before_script:
+    # Устанавливаем необходимое ПО
+    - apk add git curl jq
+    # Подключаемся к текущему репозиторию гитлаба 
+    - git remote set-url origin https://$GIT_USER:$GIT_PASS@$PROJECT_URL
+    # Задаём e-mail пользователя для дальнейших изменений
+    - git config --global user.email "$GIT_EMAIL_USER"
+    # Задаём имя пользователя для дальнейших изменений
+    - git config --global user.name "$GIT_USER"
+    # Обновляем сабмодуль, чтобы подтянуть новые изменения
+    - git submodule update --init --recursive --remote
+    # Добавляем скриптам возможность запуска
+    - chmod +x ./$PATH_TO_SUBMODULE/jira/*.sh
+    ### Надо протестировать работу джиры и сабмодуля ###
+    # Создаём файл для хранения коммитов
+    - touch pfrpuv-core-commit.txt
+    # Задаём переменные
+    - export FILE_TASKS="$CI_PROJECT_DIR/pfrpuv-core-commit.txt" 
+    # Задаём переменные
+    # - export FILE_TASKS="./$PATH_TO_SUBMODULE/jira/pfrpuv-core-commit.txt"
+  script:
+    # "Выкусываем" таски 
+    - ./$PATH_TO_SUBMODULE/jira/check_tasks.sh
+    # Запускаем скрипт для обработки тасок в джира
+    - ./$PATH_TO_SUBMODULE/jira/${JIRA_TRANSITION}
+
+# Двигаем таски джира по статусу
+jira-transition-develop:
+  extends: .jira-transition
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  variables:
+    JIRA_TRANSITION: jira_transition_develop.sh
+
+jira-transition-release:
+  extends: .jira-transition
+  # Сборка только по расписанию
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release-\\w+/"
+  variables:
+    JIRA_TRANSITION: jira_transition_release.sh
+  before_script:
+    # Устанавливаем необходимое ПО
+    - apk add git curl jq
+    # Подключаемся к текущему репозиторию гитлаба 
+    - git remote set-url origin https://$GIT_USER:$GIT_PASS@$PROJECT_URL
+    # Задаём e-mail пользователя для дальнейших изменений
+    - git config --global user.email "$GIT_EMAIL_USER"
+    # Задаём имя пользователя для дальнейших изменений
+    - git config --global user.name "$GIT_USER"
+    # Обновляем сабмодуль, чтобы подтянуть новые изменения
+    - git submodule update --init --recursive --remote
+    # Добавляем скриптам возможность запуска
+    - chmod +x ./$PATH_TO_SUBMODULE/jira/*.sh 
+    # Задаём переменные
+    - export DATE_RELEASE=`date +%d%m%y`
+    - export DATE_RELEASE_JIRA=`date +%Y-%m-%d`
+    - export TAG_VERSION="$(git describe --tags $(git rev-list --tags --max-count=1)).$DATE_RELEASE.$CI_PROJECT_NAME"
+    - export JIRA_DATA="{\"description\":\"${JIRA_COMMENT} ${TAG_VERSION}\",\"name\":\"pfrpuv-${TAG_VERSION}\",\"startDate\":\"$DATE_RELEASE_JIRA\",\"project\":\"PFRPUV\",\"projectId\":\"18000\",\"archived\":false,\"released\":false}"
+  script:
+    # "Выкусываем" таски
+    - ./$PATH_TO_SUBMODULE/jira/check_tasks.sh
+    # Запускаем скрипт для обработки тасок в джира
+    - ./$PATH_TO_SUBMODULE/jira/${JIRA_TRANSITION}
+    # Создаём тэг в джире 
+    - curl -u "$JIRA_USER":"$JIRA_PASSWD" -X POST --data "$JIRA_DATA" -H "$JIRA_CONTENT" --url "$JIRA_URL" 

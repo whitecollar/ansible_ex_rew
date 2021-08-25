@@ -1,0 +1,9 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/constructor
+deploy_name: constructor-backend
+deploy_ports:
+  - 18080:18080
+  - 8500:8500
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"

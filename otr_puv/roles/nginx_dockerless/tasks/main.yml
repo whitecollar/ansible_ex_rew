@@ -1,0 +1,8 @@
+---
+
+- include: utils_install.yml
+- include: proxy_configure.yml
+  when: inventory_hostname in groups['proxy']
+- include: front_configure.yml
+  when: inventory_hostname in groups['app_elk']
+- include: configure.yml

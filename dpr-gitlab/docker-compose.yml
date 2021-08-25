@@ -1,0 +1,116 @@
+version: '2'
+services:
+  gitlab:
+    container_name: gitlab
+    restart: always
+    image: gitlab/gitlab-ce:latest
+    hostname: dpr-gitlab.otr.ru
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://dpr-gitlab.otr.ru'
+        omnibus_gitconfig['system'] = { "http"=>["sslVerify = false"]}
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/dpr-gitlab.otr.ru.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/dpr-gitlab.otr.ru.key"
+        nginx['redirect_http_to_https'] = true
+        registry_nginx['redirect_http_to_https'] = true
+        mattermost_nginx['redirect_http_to_https'] = true
+        registry_external_url 'https://registry-dpr-gitlab.otr.ru:5005'
+        registry['enable'] = true
+        gitlab_rails['lfs_enabled'] = true
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        gitlab_workhorse['env'] = {'SSL_CERT_DIR' => '/opt/gitlab/embedded/ssl/certs/'}
+        gitlab_rails['pipeline_schedule_worker_cron'] = "*/10 * * * *"
+        gitlab_rails['backup_keep_time'] = 604800
+        gitlab_rails['ldap_enabled'] = true
+        gitlab_rails['ldap_servers'] = {
+        'main' => {
+          'label' => 'OTR(email)',
+          'host' =>  '172.31.2.113',
+          'port' => 389,
+          'uid' => 'userPrincipalName',
+          'encryption' => 'plain',
+          'verify_certificates' => true,
+          'bind_dn' => 'CN=git.it.24244,OU=System Users,DC=otr,DC=ru',
+          'password' => '15b9CzyxZs',
+          'active_directory' => true,
+          'allow_username_or_email_login' => false,
+          'lowercase_usernames' => false,
+          'block_auto_created_users' => false,
+          'base' => 'OU=OTR,DC=otr,DC=ru'
+          }
+        }
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "172.31.4.220"
+        gitlab_rails['smtp_port'] = 25
+        gitlab_rails['smtp_domain'] = "otr.ru"
+        gitlab_rails['smtp_authentication'] = false
+        gitlab_rails['smtp_enable_starttls_auto'] = false
+        gitlab_rails['gitlab_email_from'] = "dprgitlab-noreply@otr.ru"
+        gitlab_rails['gitlab_email_reply_to'] = "dprgitlab-notification@otr.ru"
+        logging['svlogd_size'] = 200 * 1024 * 1024
+        logging['svlogd_num'] = 30
+        logging['svlogd_timeout'] = 24 * 60 * 60
+        logging['svlogd_filter'] = "gzip"
+        logging['logrotate_frequency'] = "daily"
+        logging['logrotate_size'] = "50M"
+        logging['logrotate_rotate'] = 10
+        logging['logrotate_compress'] = "compress"
+        logging['logrotate_method'] = "copytruncate"
+        logging['logrotate_dateformat'] = "-%Y-%m-%d"
+        logrotate['enable'] = true
+    ports:
+      - '80:80'
+      - '443:443'
+      - '2222:22'
+      - '5005:5005'
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab_backups:/var/opt/gitlab/backups'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+      - './certs:/etc/gitlab/ssl'
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      - dpr-gitlab-net
+    logging:
+      driver: "json-file"
+      options:
+         max-file: "5"
+         max-size: "10m"
+         
+  gitlab-runner:
+   container_name: gitlab-runner
+   hostname: 'runner-dpr.otr.ru'
+   image: gitlab/gitlab-runner:latest
+   restart: always
+   depends_on:
+      - 'gitlab'
+   volumes:
+     - ./certs:/certs
+     - ./gitlab-runner/data:/home/gitlab_ci_multi_runner/data
+     - /var/run/docker.sock:/var/run/docker.sock:rw
+   environment:
+     - CI_SERVER_URL=https://dpr-gitlab.otr.ru/ci
+     - RUNNER_TOKEN=uMPi9z-E3v85HThLtkN5
+     - RUNNER_DESCRIPTION=DPR Runner
+     - RUNNER_EXECUTOR=shell
+   networks:
+     dpr-gitlab-net:
+   logging:
+      driver: "json-file"
+      options:
+         max-file: "5"
+         max-size: "10m"
+  
+networks:
+    dpr-gitlab-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 192.168.100.0/24
+              gateway: 192.168.100.1

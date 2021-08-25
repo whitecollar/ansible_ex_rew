@@ -1,0 +1,35 @@
+---
+
+# Останавливаем сервис явы
+- name: Update Java 11 | Stop java 11 unit 
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: stopped
+
+# Удаляем старый артефакт
+- name: Update Java 11 | Delete old artifact
+  file:
+    path: "{{ app_dir }}/{{ service_name }}.jar"
+    state: absent 
+
+# Получаем имя нашего артефакта
+- name: Update Java 11 | Get a list of file
+  shell: "ls {{ path_to_artifacts }}/*.jar"
+  changed_when: false
+  register: results
+  delegate_to: localhost
+
+# Копируем новый артефакт
+- name: Update Java 11 | Copy new artifact
+  copy:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/{{ service_name }}.jar"
+  with_items: "{{ results.stdout_lines }}"
+
+# Запускаем сервис
+- name: Update Java 11 | Start java 11 unit 
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: started

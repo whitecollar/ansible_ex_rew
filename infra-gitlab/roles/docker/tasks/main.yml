@@ -1,0 +1,17 @@
+---
+
+### rhel-7-server-extras-rpms необходим для установки container-selinux для установки docker ###
+- include: docker_install.yml
+
+- include: docker_configure.yml
+
+- include: docker-compose_install.yml
+
+# Фикс для докера, вероятно только для rhel 7.2
+# По неясной причине docker перестаёт создавать нужную цепочку в правилах iptables
+# Раскомментировать при необходимости
+# - include: portainer_misc.yml
+
+- include: portainer_install.yml
+
+- include: portainer_configure.yml

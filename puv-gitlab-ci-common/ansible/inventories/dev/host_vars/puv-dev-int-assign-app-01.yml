@@ -1,0 +1,29 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/assign
+deploy_name: assign-backend
+deploy_ports:
+  - 18080:18080
+  - 8500:8500
+  - 5006:5005
+deploy_exposed_ports:
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"
+
+deploy_registry_image_2: registry-dpr-gitlab.otr.ru:5005/puv/assign-ufos
+deploy_name_2: assign-ufos-backend
+deploy_ports_2:
+  - 18081:18080
+  - 5005:5005
+deploy_exposed_ports_2:
+  - 7777/tcp
+deploy_volumes_2:
+  - "{{ app_dir }}/logs_ufos/:/usr/share/jetty/logs"
+
+deploy_registry_image_3: registry-dpr-gitlab.otr.ru:5005/puv/acc
+deploy_name_3: acc
+deploy_ports_3:
+  - 18083:18080
+deploy_exposed_ports_3:
+deploy_volumes_3:
+  - "{{ app_dir }}/logs/:/app/log"

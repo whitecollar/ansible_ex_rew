@@ -1,0 +1,11 @@
+---
+
+# Устанавливаем docker-compose
+- name: Docker-Compose Install | Docker-compose install
+  shell: 'curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+
+# Выдаём права на запуск docker-compose
+- name: Docker-Compose Install | Exercise rights
+  file:
+    path: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x

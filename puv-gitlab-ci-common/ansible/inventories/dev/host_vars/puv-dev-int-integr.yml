@@ -1,0 +1,7 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/int-integr
+deploy_name: apache_nifi
+
+nifi_url: "http://{{ inventory_hostname }}.otr.ru:8080"
+nifi_registry_url: "http://{{ inventory_hostname }}.otr.ru:18080"

@@ -1,0 +1,11 @@
+---
+# Фикс для докера, вероятно только для rhel 7.2
+# По неясной причине docker перестаёт создавать нужную цепочку в правилах iptables
+# Раскомментировать при необходимости
+# - include: portainer_misc.yml
+#   when: ansible_distribution != "CentOS"
+
+- include: portainer_install.yml
+
+- include: portainer_configure.yml
+  when: portainer_install.changed

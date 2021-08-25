@@ -1,0 +1,7 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images
+deploy_name: nginx
+deploy_branch: nginx-1.19.2-alpine
+deploy_ports: 8080:80
+deploy_volumes: "{{ app_dir }}/nginx:/etc/nginx/conf.d/"

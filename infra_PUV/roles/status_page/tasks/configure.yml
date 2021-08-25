@@ -1,0 +1,23 @@
+---
+
+# Создаём директорию для приложения
+- name: Configure | Create app directory
+  file:
+    state: directory
+    path: "{{ app_dir }}"
+
+# Создаём директорию для данных
+- name: Configure | Create date directory
+  file:
+    state: directory
+    path: "{{ app_dir }}/lists"
+
+# Копируем шаблоны в директорию приложения
+- name: Configure | Host lists copy
+  template:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/lists/{{ item | basename | regex_replace('.j2', '') }}"
+    force: true
+  with_fileglob:
+    - ../templates/lists/*.j2
+  register: update_list

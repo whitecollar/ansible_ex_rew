@@ -1,0 +1,22 @@
+---
+
+# Регистрируем раннер на сервере гитлаба.
+# Описание переменных тут ../defaults/main.yml
+- name: Rigistration | Registered 1st runner on gitlab-server
+  shell: 'docker exec -ti dpr-gitlab-runner gitlab-runner register --non-interactive --executor "{{ runner_executor }}" --docker-image "{{ runner_image }}" --url "{{ gitlab_coordinator }}" --registration-token "{{ gitlab_token }}" --description "{{ runner_description }}" --tag-list "{{ runner_tags }}" --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" --docker-helper-image "{{ helper_image }}" --run-untagged="true" --locked="false" --docker-privileged --docker-dns "172.31.2.113" --docker-dns "172.31.4.4" --docker-dns "172.31.198.254" --docker-dns "172.31.197.248" --docker-dns "172.31.197.212" --docker-dns-search "pds.otr.ru" --docker-dns-search "otr.ru" '
+  tags:
+    - first
+
+# Регистрируем раннер на сервере гитлаба.
+# Описание переменных тут ../defaults/main.yml
+- name: Rigistration | Registered 2st runner on gitlab-server
+  shell: 'docker exec -ti infra-gitlab-runner gitlab-runner register --non-interactive --executor "{{ runner_executor_2 }}" --docker-image "{{ runner_image }}" --url "{{ gitlab_coordinator_2 }}" --registration-token "{{ gitlab_token_2 }}" --description "{{ runner_description_2 }}" --tag-list "{{ runner_tags_2 }}" --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" --docker-helper-image "{{ helper_image }}" --run-untagged="false" --locked="false" --docker-privileged --docker-dns "172.31.2.113" --docker-dns "172.31.4.4" --docker-dns "172.31.198.254" --docker-dns "172.31.197.248" --docker-dns "172.31.197.212" --docker-dns-search "pds.otr.ru" --docker-dns-search "otr.ru" '
+  tags:
+    - first
+
+# Регистрируем раннер на сервере гитлаба.
+# Описание переменных тут ../defaults/main.yml
+- name: Rigistration | Registered 1st runner on gitlab-server
+  shell: 'docker exec -ti dpr-gitlab-runner gitlab-runner register --non-interactive --executor "{{ runner_executor }}" --docker-image "{{ runner_image }}" --url "{{ gitlab_coordinator }}" --registration-token "{{ gitlab_token }}" --description "{{ runner_description }}" --tag-list "{{ runner_tags }}" --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" --docker-helper-image "{{ helper_image }}" --run-untagged="true" --locked="false" --docker-privileged --docker-dns "172.31.2.113" --docker-dns "172.31.4.4" --docker-dns "172.31.198.254" --docker-dns "172.31.197.248" --docker-dns "172.31.197.212" --docker-dns-search "pds.otr.ru" --docker-dns-search "otr.ru" '
+  tags:
+    - second

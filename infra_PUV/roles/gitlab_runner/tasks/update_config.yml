@@ -1,0 +1,50 @@
+---
+
+# Устанавливаем количество раннеров
+- name: Update Config | Enable runners
+  lineinfile:
+    path: "{{ app_dir }}/dpr-gitlab-runner/config/config.toml"
+    regexp: '^concurrent'
+    line: 'concurrent = 8'
+  tags:
+    - first
+
+# Устанавливаем количество раннеров
+- name: Update Config | Enable runners
+  lineinfile:
+    path: "{{ app_dir }}/infra-gitlab-runner/config/config.toml"
+    regexp: '^concurrent'
+    line: 'concurrent = 2'
+  tags:
+    - first
+
+ # Устанавливаем количество раннеров
+- name: Update Config | Enable runners
+  lineinfile:
+    path: "{{ app_dir }}/dpr-gitlab-runner/config/config.toml"
+    regexp: '^concurrent'
+    line: 'concurrent = 4'
+  tags:
+    - second
+
+# Запускаем контейнеры указанные в файле docker-compose
+- name: Update Config | Docker compose down
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    remove_orphans: true
+    state: absent
+  tags:
+    - first
+    - second
+
+# Запускаем контейнеры указанные в файле docker-compose
+- name: Update Config | Docker compose up
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    remove_orphans: true
+    state: present
+    recreate: always
+    pull: yes
+  tags:
+    - first
+    - second

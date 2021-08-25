@@ -1,0 +1,18 @@
+stages:
+  - deploy-nexus
+
+deploy-nexus:
+  stage: deploy-nexus
+  only:
+    - "/^release-\\w+/"
+  before_script:
+    - apk add curl
+  script:
+  # Так сделано, потому что переменная file_name принимает значение в виде абсолютного пути, а в нексус нам нужно только файл закинуть.
+    - |
+      for file_name in $(find $PATH_TO_ARTIFACTS/*.* -type f); do
+        cp $file_name /
+      done
+      for file_name in $(find /*.* -type f); do
+        curl -v -u $NEXUS_USER:$NEXUS_PASS --upload-file "$file_name" "http://nexus.otr.ru/content/repositories/puv/releases/${CI_COMMIT_BRANCH}/${CI_PROJECT_NAME}/$file_name"
+      done

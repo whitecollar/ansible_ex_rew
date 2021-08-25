@@ -1,0 +1,7 @@
+---
+
+- include: docker-env.yml 
+  when: not "-int-proxy-01" in inventory_hostname 
+- include: docker-images.yml
+- include: docker-compose-up.yml
+- include: docker-prune.yml

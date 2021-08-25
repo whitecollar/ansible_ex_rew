@@ -1,0 +1,30 @@
+---
+
+- name: Docker Configure | Add repository
+  yum_repository:
+    name: docker-ce
+    description: Docker-ce Repo
+    baseurl: https://download.docker.com/linux/centos/8/x86_64/stable/
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
+
+# Создаём рабочую директорию
+- name: Docker Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ config_dir }}/docker"
+    owner: root
+    group: root
+    mode: 1701
+
+# Создаём рабочую директорию для конфигов докера
+- name: Docker Configure | Create work dir
+  file:
+    state: directory
+    path: "/etc/docker"
+
+# Создаём символическую ссылку на новую рабочую диреткорию
+- name: Docker Configure | Create a symbolic link
+  file:
+    src: "{{ config_dir }}/docker"
+    dest: /var/lib/docker
+    state: link

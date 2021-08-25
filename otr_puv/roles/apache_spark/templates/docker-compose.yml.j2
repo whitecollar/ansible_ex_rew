@@ -1,0 +1,66 @@
+version: '2'
+services:
+  {{ master_name }}:
+    image: '{{ spark_image }}'
+    container_name: {{ master_name }}
+    hostname: {{ inventory_hostname }}
+    env_file:
+        - {{ app_dir }}/env.master
+    ports:
+{% for port in master_ports %}
+      - "{{ port }}"
+{% endfor %}
+    volumes:
+{% for volume in master_volumes %}
+      - "{{ volume }}"
+{% endfor %}
+    dns:
+{% for host in dns %} 
+      - "{{ host }}"
+{% endfor %}
+    dns_search: 
+{% for name in dns_search %} 
+      - "{{ name }}"
+{% endfor %}
+    restart: unless-stopped
+    networks:
+      spark-master-net:
+        ipv4_address: {{ master_ip_address }}
+
+  {{ worker_1_name }}:
+    image: '{{ spark_image }}'
+    container_name: {{ worker_1_name }}
+    hostname: {{ inventory_hostname }}
+    env_file:
+        - {{ app_dir }}/env.worker-1
+    ports:
+{% for port in worker_1_ports %}
+      - "{{ port }}"
+{% endfor %}
+    volumes:
+{% for volume in worker_1_volumes %}
+      - "{{ volume }}"
+{% endfor %}
+    dns:
+{% for host in dns %} 
+      - "{{ host }}"
+{% endfor %}
+    dns_search: 
+{% for name in dns_search %} 
+      - "{{ name }}"
+{% endfor %}
+    restart: unless-stopped
+    networks:
+      spark-master-net:
+        ipv4_address: {{ worker_1_ip_address }}
+
+networks:
+    spark-master-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: {{ subnet }}
+              gateway: {{ gateway }}

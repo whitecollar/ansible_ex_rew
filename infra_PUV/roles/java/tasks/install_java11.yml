@@ -1,0 +1,27 @@
+---
+
+- name: Install Java 11 | Creates directory  
+  file:
+    path: "{{ java11_inst_dir }}"
+    state: directory
+    mode: '0755'
+  register: create_work_dir
+
+- name: Install Java 11 | Download files
+  get_url:
+    url: https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+    dest: "{{ config_dir }}/{{ java11_pkg_name }}"
+  when: create_work_dir.changed
+
+- name: Install Java 11 | Unarchived
+  unarchive:
+    src: "{{ config_dir }}/{{ java11_pkg_name }}"
+    dest: "{{ config_dir  }}"
+    remote_src: yes
+  when: create_work_dir.changed
+
+- name: Install Java 11 | Delete archive
+  file: 
+    path: "{{ config_dir }}/{{ java11_pkg_name }}"
+    state: absent
+  when: create_work_dir.changed

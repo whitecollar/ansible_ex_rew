@@ -1,0 +1,13 @@
+---
+
+artifacts_name: overpay
+
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+psql_db_name: "overpay"
+psql_pg_pass: "Oracle13"
+
+psql_name_2: "puv-prom-stage-int-eld-gp-master.otr.ru"
+psql_db_user_2: "eldfin_test"
+psql_db_name_2: "eldfin_test"
+psql_db_pass_2: "Oracle33"

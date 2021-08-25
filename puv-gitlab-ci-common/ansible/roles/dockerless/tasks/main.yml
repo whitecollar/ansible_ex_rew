@@ -1,0 +1,13 @@
+---
+
+  - include: update_java11.yml
+    tags: 
+      - first
+      - second
+  - include: update_java8.yml
+    tags: 
+      - ufos
+  - include: update_front.yml
+    tags:
+      - front
+      

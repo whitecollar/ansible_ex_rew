@@ -1,0 +1,20 @@
+---
+
+# Логинимся на наш реджистри
+- name: Docker Images | Log into private registry and force re-authorization
+  docker_login:
+    registry: "{{ deploy_registry_url }}"
+    username: "{{ deploy_registry_user }}"
+    password: "{{ deploy_registry_pass }}"
+    reauthorize: true
+  no_log: false
+  changed_when: false
+
+# Скачваем нужные изображения. Игнорирование ошибок включено, чтобы не ломалсяя плейбук для тех компонент, где ещё нет образа.
+- name: Docker Images | Pull an images
+  docker_image:
+    name: "{{ deploy_registry_image_app }}:{{ deploy_branch_app }}"
+    source: pull
+    force_source: true
+  register: images_pull_result
+  ignore_errors: yes  

@@ -1,0 +1,16 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/payment-app
+deploy_name: payment-backend
+deploy_ports:
+  - 18080:18080
+  - 8500:8500
+  - 5006:5005
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"
+
+app_db: jdbc:postgresql://puv-dev-int-payment-db:5432/payment
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+eld_url: http://puv-dev-eld-app.otr.ru:9080
+payment_integr_url: http://puv-dev-int-integr.otr.ru:9087

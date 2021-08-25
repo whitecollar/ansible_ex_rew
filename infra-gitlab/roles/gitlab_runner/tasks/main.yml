@@ -1,0 +1,9 @@
+---
+
+- include: configure.yml
+
+- include: docker-compose_up.yml
+
+# Обязательно изменить переменную gitlab_token!!!
+# Описание переменных тут ../defaults/main.yml
+- include: registration.yml

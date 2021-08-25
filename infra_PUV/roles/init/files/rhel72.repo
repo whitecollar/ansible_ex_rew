@@ -1,0 +1,119 @@
+[myrepo-rhel-7-server-rpms]
+name=local rhel-7-server-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+### rhel-7-server-extras-rpms необходим для установки пакета container-selinux для установки docker ###
+[myrepo-rhel-7-server-extras-rpms]
+name=local rhel-7-server-extras-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-extras-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-rhn-tools-rpms]
+name=local rhel-7-server-rhn-tools-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-rhn-tools-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-optional-fastrack-rpms]
+name=local rhel-7-server-optional-fastrack-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-optional-fastrack-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-fastrack-rpms]
+name=local rhel-7-server-fastrack-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-fastrack-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-rh-common-rpms]
+name=local rhel-7-server-rh-common-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-rh-common-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-supplementary-rpms]
+name=local rhel-7-server-supplementary-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-supplementary-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-openstack-8-tools-rpms]
+name=local rhel-7-server-openstack-8-tools-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-openstack-8-tools-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-thirdparty-oracle-java-rpms]
+name=local rhel-7-server-thirdparty-oracle-java-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-thirdparty-oracle-java-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-atomic-host-rpms]
+name=local rhel-atomic-host-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-atomic-host-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rh-gluster-3-client-for-rhel-7-server-rpms]
+name=local rh-gluster-3-client-for-rhel-7-server-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rh-gluster-3-client-for-rhel-7-server-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-v2vwin-1-rpms]
+name=local rhel-7-server-v2vwin-1-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-v2vwin-1-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-rt-beta-rpms]
+name=local rhel-7-server-rt-beta-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-rt-beta-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-rs-for-rhel-7-server-rpms]
+name=local rhel-rs-for-rhel-7-server-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-rs-for-rhel-7-server-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-ha-for-rhel-7-server-rpms]
+name=local rhel-ha-for-rhel-7-server-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-ha-for-rhel-7-server-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-rt-rpms]
+name=local rhel-7-server-rt-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-rt-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0
+
+[myrepo-rhel-7-server-rhceph-2-tools-rpms]
+name=local rhel-7-server-rhceph-2-tools-rpms
+baseurl=http://puv-dev-int-nsi-db.otr.ru/rhel-7-server-rhceph-2-tools-rpms
+filovermethod=priority
+enabled=1
+gpgcheck=0

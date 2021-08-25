@@ -1,0 +1,35 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/constructor
+deploy_name: constructor-backend
+deploy_ports: 18080:18080
+deploy_volumes: "{{ app_dir }}/logs/:/app/log"
+deploy_branch: universal-doc
+
+redis_host: puv-dev-constructor-test.otr.ru
+redis_port: 6379
+redis_login: redis
+redis_password: CDD2RbuYAqxfKMnV28WNtqE7
+redis_topic: default
+ufos_nsi: http://puv-dev-constructor-test:18081
+
+constructor_url: "puv-{{ var_env }}-constructor-test"
+
+deploy_registry_image_2: registry-dpr-gitlab.otr.ru:5005/puv/nsi-ufos
+deploy_name_2: nsi-ufos-backend
+deploy_ports_2: 18081:18080
+deploy_ports_debug_2: 5005:5005
+deploy_exposed_ports_2: 7777
+deploy_volumes_2: "{{ app_dir }}/logs_ufos/:/usr/share/jetty/logs"
+deploy_branch_2: universal-doc
+
+db_login: puv
+db_password: Oracle33
+
+db_ufos_host_prop: "jdbc:postgresql://postgres:5432/nsi_bos"
+
+deploy_registry_image_3: registry-dpr-gitlab.otr.ru:5005/puv/puv-pages
+deploy_name_3: elk-frontend
+deploy_ports_3: 80:80
+deploy_volumes_3: "{{ app_dir }}/logs/:/var/log/nginx/"
+deploy_branch_3: universal-doc

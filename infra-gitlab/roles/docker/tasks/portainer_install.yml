@@ -1,0 +1,19 @@
+---
+
+# Созадаём том для портейнера:
+- name: Portainer Install | Portainer volume create
+  shell: 'docker volume create --name portainer_data'
+
+# Копируем файл с паролем портейнера
+- name: Portainer Install | Copy pwd file
+  copy:
+    src: "portainer_password"
+    dest: "/tmp/portainer_password"
+    force: true
+
+# Запускаем портейнер:
+# -v /var/run/docker.sock:/var/run/docker.sock - том для сокета
+# -v portainer_data:/data - том для данных
+# -v /tmp/portainer_password:/tmp/portainer_password - том с паролем
+- name: Portainer Install | Portainer start
+  shell: "docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data -v /tmp/portainer_password:/tmp/portainer_password portainer/portainer --admin-password-file /tmp/portainer_password"

@@ -1,0 +1,115 @@
+[infinispan]
+puv-test-int-nsi-cache db_directory="/egisso"
+
+[postgres_pro]
+puv-test-int-assign-db db_directory="/egisso"
+puv-test-int-assign-bpm-db db_directory="/egisso"
+puv-test-int-nsi-db db_directory="/egisso"
+puv-test-int-overpay-db db_directory="/egisso"
+puv-test-int-payment-db db_directory="/egisso"
+puv-test-int-reg-db db_directory="/egisso"
+
+[green_plum_db]
+[green_plum_db:children]
+green_plum_db_master
+green_plum_db_slave
+
+[green_plum_db_master]
+puv-test-int-eld-gp-master db_directory="/egisso"
+
+[green_plum_db_slave]
+puv-test-int-eld-gp-segment-[01:04] db_directory="/egisso"	
+
+[camunda_bpm]
+puv-test-int-assign-bpm-01 db_directory="/egisso"
+puv-test-int-assign-bpm-02 db_directory="/egisso"
+puv-test-int-overpay-bpm-01
+ 
+[apache_ignite]
+puv-test-int-reg-ignite-01 db_directory="/egisso"
+puv-test-int-reg-ignite-02 db_directory="/egisso"
+
+[rabbitmq]
+[rabbitmq:children]
+rabbitmq_first
+rabbitmq_next
+
+[rabbitmq_first]
+puv-test-int-broker-01 db_directory="/egisso"
+
+[rabbitmq_next]
+puv-test-int-broker-02 db_directory="/egisso"
+
+[redis]
+puv-test-int-eld-cache db_directory="/egisso"
+
+[app]
+puv-test-int-assign-app-01 db_directory="/egisso"
+puv-test-int-assign-app-02 db_directory="/egisso"
+puv-test-int-eld-app db_directory="/egisso"
+puv-test-int-eld-integr db_directory="/egisso"
+puv-test-int-fias-app
+puv-test-int-integr db_directory="/egisso"
+puv-test-int-overpay-app-01
+puv-test-int-payment-app-01
+puv-test-int-payment-app-02
+puv-test-int-reg-app-01 db_directory="/egisso"
+puv-test-int-reg-app-02 db_directory="/egisso"
+puv-test-int-nsi-app db_directory="/egisso"
+puv-test-int-elk-01
+puv-test-int-auth-admin
+puv-test-int-constructor
+
+[app_test_compose]
+puv-test-int-fias-app
+
+[kubernetes]
+[kubernetes:children]
+kubernetes_master
+kubernetes_worker
+
+[kubernetes_master]
+puv-test-ext-infra-k8s-01
+puv-test-ext-infra-k8s-02
+puv-test-ext-infra-k8s-03
+
+[kubernetes_worker]
+puv-test-ext-node-k8s-[01:04]
+
+[swagger]
+puv-test-swagger
+
+[fias]
+puv-test-int-fias-app
+
+[rocketchat]
+puv-test-int-rc
+
+[consul]
+puv-test-int-consul
+
+[infra]
+puv-test-infra-01
+puv-test-infra-02
+
+[rhel72]
+[rhel72:children]
+apache_ignite
+app
+camunda_bpm
+green_plum_db
+infinispan
+infra
+kubernetes # закоменчен для тестов ci/cd
+postgres_pro
+rabbitmq
+redis
+
+[centos]
+puv-test-int-auth-admin
+puv-test-int-constructor
+[centos:children]
+swagger
+fias
+rocketchat
+consul

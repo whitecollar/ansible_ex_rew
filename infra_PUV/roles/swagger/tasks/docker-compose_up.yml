@@ -1,0 +1,9 @@
+---
+#  Запуск сервисов Swagger через docker-compose
+- name: Swagger Install | Docker compose up
+  docker_compose:
+    project_src: "{{ db_directory }}/swagger-compose"
+    remove_orphans: true
+    state: present
+    recreate: always
+    pull: yes

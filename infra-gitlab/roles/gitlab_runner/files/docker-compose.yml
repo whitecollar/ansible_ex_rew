@@ -1,0 +1,35 @@
+version: '2'
+services:
+  gitlab-runner:
+   container_name: gitlab-runner
+   hostname: 'puv-dev-infra-01.otr.ru'
+   image: gitlab/gitlab-runner:alpine
+   restart: always
+   volumes:
+     - ./certs:/certs
+     - ./gitlab-runner/data:/home/gitlab_ci_multi_runner/data
+     - ./gitlab-runner/config:/etc/gitlab-runner
+     - /var/run/docker.sock:/var/run/docker.sock:rw
+   environment:
+     - CI_SERVER_URL=https://infra-gitlab.otr.ru/ci
+     - RUNNER_TOKEN=Q9q9SR_G41CQibXxhQ8g
+     - RUNNER_DESCRIPTION=infra Runner
+     - RUNNER_EXECUTOR=shell
+   networks:
+     infra-gitlab-net:
+   logging:
+      driver: "json-file"
+      options:
+         max-file: "5"
+         max-size: "10m"
+
+networks:
+    infra-gitlab-net:
+       driver: bridge # Надо менять , иначе второй раннер рядом не поставить
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.10.10.0/24
+              gateway: 10.10.10.1

@@ -1,0 +1,30 @@
+---
+
+# Отключаем firewalld для корректной работы
+- name: Misc | Disable firewalld
+  systemd:
+    state: stopped
+    enabled: false
+    name: firewalld
+  register: firewalld_disabled
+  ignore_errors: yes  
+
+# Отключаем SELinux для корректной работы
+- name: Misc | Disable SELinux
+  selinux:
+    state: disabled
+  register: selinux_disabled  
+
+# Чтобы изменения применились перезагружаем хост
+- name: Misc | Reboot
+  reboot:
+    reboot_timeout: 300
+  when: firewalld_disabled.changed or selinux_disabled.changed
+
+# Создаём папку для приложений.
+- name: Docker Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}"
+    owner: root
+    group: root

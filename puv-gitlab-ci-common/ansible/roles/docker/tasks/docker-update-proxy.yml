@@ -1,0 +1,29 @@
+---
+
+# Останавливаем контейнер.
+- name: Docker Update | Stop a container proxy
+  docker_container:
+    name: "{{ deploy_name_2 }}"
+    state: stopped
+    timeout: 600
+  ignore_errors: yes
+  
+# Удаляем контейнер.
+- name: Docker Update | Delete a container proxy
+  docker_container:
+    name: "{{ deploy_name_2 }}"
+    state: absent
+    timeout: 600 
+  ignore_errors: yes
+
+# Создаём контейнер заново.
+- name: Docker Update | Update a container proxy
+  docker_container:
+    name: "{{ deploy_name_2 }}"
+    image: "{{ deploy_image }}"
+    ports: "{{ deploy_ports_2 }}"
+    exposed_ports: "{{ deploy_exposed_ports }}"
+    volumes: "{{ deploy_volumes_2 }}"
+    restart_policy: always
+    state: started
+    timeout: 600

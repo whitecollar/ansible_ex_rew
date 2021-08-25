@@ -1,0 +1,76 @@
+---
+
+# Создаём рабочую директорию
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres"
+    owner: root
+    group: root
+
+# Создаём рабочую директорию конфиг файлов
+- name: Configure | Create config dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres/configs"
+    owner: root
+    group: root
+
+#  Создаем файл лога для pgbouncer, так как он не стартует без него, туда пишется инфа о всех коннектах
+- name: Configure | Create log file
+  copy:
+    content: ""
+    dest: "{{ app_dir }}/postgres/pgbouncer_connection.log"
+    force: no
+    mode: 0777
+
+#  Копируем конфиг pg_hba 
+- name: Configure | Configure pg_hba.conf file
+  template:
+    src: "pg_hba.conf.j2"
+    dest: "{{ app_dir }}/postgres/configs/pg_hba.conf"
+
+#  Копируем конфиг pgbouncer
+- name: Configure | Copy pgbouncer config
+  template:
+    src: "pgbouncer.ini.j2"
+    dest: "{{ app_dir }}/postgres/configs/pgbouncer.ini"
+
+#  Копируем список разрешенных пользователй на подключение через pgbouncer
+- name: Configure | Copy userlist.txt
+  template:
+    src: "userlist.txt.j2"
+    dest: "{{ app_dir }}/postgres/configs/userlist.txt"
+    force: yes
+
+#  Копируем файл docker-compose.yml для запуска сервисов
+- name: Configure | Copy docker-compose.yml file
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ app_dir }}/docker-compose.yml"
+    force: yes
+
+#  Копируем скрипт которйы создает нужных пользователей для pgbouncer
+- name: Configure | gen_userlist.sh
+  copy:
+    src: "gen_userlist.sh"
+    dest: "{{ app_dir }}/postgres/gen_userlist.sh"
+
+#  Копируем скрипты которые генерируют права доступа к базам для пользователей
+#список параметров:
+#-host    -    имя/ip_адрес хоста
+#-port    -    номер порта (можно не указывать, тогда будет использован порт по-умолчанию - 5432)
+#-database   -    имя БД
+#-user          -    имя пользюка для которого генерим права
+#-access       -    уровень доступа для нового пользюка (read/write)
+#-db_owner -     имя владельца БД
+#положить скрипты в одну папку
+- name: Configure | Copy add_user_perm.sh
+  copy:
+    src: "add_user_perm.sh"
+    dest: "{{ app_dir }}/postgres/add_user_perm.sh"
+
+- name: Configure | Copy make_script.txt
+  copy:
+    src: "make_script.txt"
+    dest: "{{ app_dir }}/postgres/make_script.txt"

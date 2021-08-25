@@ -1,0 +1,9 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/puv-pages
+deploy_name: elk-frontend
+deploy_ports:
+  - 18080:80
+  - 9000:9000
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/var/log/nginx/"

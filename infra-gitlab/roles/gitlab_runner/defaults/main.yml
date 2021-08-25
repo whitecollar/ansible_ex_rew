@@ -1,0 +1,14 @@
+---
+
+# Сервер гитлаба
+gitlab_coordinator: "https://infra-gitlab.otr.ru/"
+# Ключ всегда меняется, необходимо на сервере гитлаба получать новый и заменять!!!
+gitlab_token: JUyFZgszq65yhZZxWVpG
+# Подпись ранера, чтобы понимать, для чего он
+runner_description: test
+# Тэг раннера, чтобы использовать его в ci/cd
+runner_tag: test
+# Задача, которые будет выполнять ранер
+runner_executor: docker
+# Образ докера, в котром будут выполняться задачи
+runner_image: alpine:latest

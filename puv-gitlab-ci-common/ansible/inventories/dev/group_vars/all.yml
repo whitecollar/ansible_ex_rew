@@ -1,0 +1,11 @@
+ansible_user: ansible_puv_user
+
+config_dir: /opt
+app_dir: "{{ config_dir }}/app"
+
+deploy_exposed_ports:
+deploy_branch: master
+deploy_branch_2: master
+
+deploy_registry_url: registry-dpr-gitlab.otr.ru:5005
+deploy_registry_user: ansible_ci_cd_user

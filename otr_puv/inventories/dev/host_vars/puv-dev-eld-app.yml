@@ -1,0 +1,30 @@
+---
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/personals
+deploy_name: personals-backend
+deploy_ports:
+  - 8080:8080
+
+env_port: "8080"
+
+psql_ip: "10.20.10.111"
+psql_port: "5432"
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+psql_db_name: "personals"
+psql_pg_pass: "Oracle13"
+# Переменная для установки дополнительного модуля dblink
+psql_db_extension: "dblink"
+
+deploy_registry_image_2: registry-dpr-gitlab.otr.ru:5005/puv/int-eld-fin
+deploy_name_2: int-eld-fin-backend
+deploy_ports_2:
+  - 9080:8080
+
+env_port_2: "9080"
+psql_name_2: "puv-dev-int-eld-gp-master.otr.ru"
+psql_db_user_2: "eldfin_dev"
+psql_db_name_2: "eldfin_dev"
+psql_db_pass_2: "Oracle33"
+psql_db_user_fw_2: "eldfin_dev"
+psql_db_name_fw_2: "eldfin_dev"
+psql_db_pass_fw_2: "Oracle33"

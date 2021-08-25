@@ -1,0 +1,6 @@
+---
+
+- hosts: postgres_dockerless
+  become: true
+  roles:
+    - postgres_dockerless

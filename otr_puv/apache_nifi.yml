@@ -1,0 +1,6 @@
+---
+
+- hosts: apache_nifi
+  become: true
+  roles:
+    - apache_nifi

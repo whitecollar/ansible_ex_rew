@@ -1,0 +1,6 @@
+---
+
+- hosts: auth_admin
+  become: true
+  roles:
+    - auth-admin

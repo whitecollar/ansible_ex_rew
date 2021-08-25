@@ -1,0 +1,148 @@
+version: '2'
+
+services:
+  # **************************
+  # SERVER
+  # **************************
+  consul-master:
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:consul'
+    container_name: "consul-master"
+    hostname: "consul-master"
+    environment:
+      - "CONSUL_LOCAL_CONFIG={\"disable_update_check\": true}"
+      - "CONSUL_BIND_INTERFACE=eth0"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      - dpr-consul-net
+    ports:
+      - "8301:8301"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
+    volumes:
+      - ./consul-master-data:/consul/data
+    command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetInterfaceIP \"eth0\" }}'"
+    restart: unless-stopped
+
+  # **************************
+  # AGENT-1
+  # **************************
+  consul-agent-1:
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:consul'
+    container_name: "consul-agent-1"
+    hostname: "consul-agent-1"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      - dpr-consul-net   
+    ports:
+      - "8400"
+      - "8500"
+      - "8600"
+      - "8600/udp"
+    volumes:
+      - ./consul-agent1-data:/consul/data
+    depends_on:
+      - "consul-master"
+    command: "agent -server -retry-join consul-master"
+    restart: unless-stopped
+
+  # **************************
+  # AGENT-2
+  # **************************
+  consul-agent-2:
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:consul'
+    container_name: "consul-agent-2"
+    hostname: "consul-agent-2"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      - dpr-consul-net
+    
+    ports:
+      - "8400"
+      - "8500"
+      - "8600"
+      - "8600/udp"
+    volumes:
+      - ./consul-agent2-data:/consul/data
+    depends_on:
+      - "consul-master"
+    command: "agent -server -retry-join consul-master"
+    restart: unless-stopped
+
+  # **************************
+  # AGENT-3
+  # **************************
+  consul-agent-3:
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:consul'
+    container_name: "consul-agent-3"
+    hostname: "consul-agent-3"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      - dpr-consul-net
+    ports:
+      - "8400"
+      - "8500"
+      - "8600"
+      - "8600/udp"
+    volumes:
+      - ./consul-agent3-data:/consul/data
+    depends_on:
+      - "consul-master"
+    command: "agent -retry-join consul-master"
+    restart: unless-stopped
+
+    # **************************
+  # AGENT-4
+  # **************************
+  consul-agent-4:
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:consul'
+    container_name: "consul-agent-4"
+    hostname: "consul-agent-4"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+    networks:
+      - dpr-consul-net
+    ports:
+      - "8400"
+      - "8500"
+      - "8600"
+      - "8600/udp"
+    volumes:
+      - ./consul-agent4-data:/consul/data
+    depends_on:
+      - "consul-master"
+    command: "agent -retry-join consul-master"
+    restart: unless-stopped
+
+networks:
+    dpr-consul-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.80.10.0/24
+              gateway: 10.80.10.1
+
+volumes:
+  consul-master-data:
+    driver: local
+  consul-agent1-data:
+    driver: local
+  consul-agent2-data:
+    driver: local
+  consul-agent3-data:
+    driver: local
+  consul-agent4-data:
+    driver: local

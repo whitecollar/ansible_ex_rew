@@ -1,0 +1,34 @@
+---
+
+# Архивируем артефакты
+- archive:
+    path: "{{ path_to_artifacts }}"
+    dest: "/artifacts.tgz"
+  delegate_to: localhost
+
+# Копируем архив артефактов
+- name: Update Java 8 | Copy new artifact
+  copy:
+    src: "/artifacts.tgz"
+    dest: "/tmp"
+    force: true
+
+# Разархивируем артефакты
+- name: Update Java 8 | Unarchived 
+  unarchive:
+    src: "{{ app_dir }}/artifacts.tgz"
+    dest: "/tmp"
+    remote_src: yes
+    
+# Копируем новые файлы
+- name: Update Java 8 | Copy new files 
+  copy:
+    src: "/tmp/dist/"
+    dest: "{{ app_dir }}"
+    remote_src: yes
+
+# Перечитываем конфиг nginx
+- name: Update Front | Reload nginx
+  service:
+    name: nginx
+    state: reloaded

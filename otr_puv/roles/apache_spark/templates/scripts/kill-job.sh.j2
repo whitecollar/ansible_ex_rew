@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# $1 - имя файла для хранения ID джобы, которую будем удалять при редеплое
+SPARK_DRIVER_ID=`cat $1 | grep -Po 'driver-\d+-\d+' | uniq`
+
+docker exec -ti spark-master ./bin/spark-class org.apache.spark.deploy.Client kill {{ master_url }} $SPARK_DRIVER_ID

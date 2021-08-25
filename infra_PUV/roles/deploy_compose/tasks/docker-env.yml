@@ -1,0 +1,18 @@
+---
+
+- name: Configure | Copy env app file
+  template:
+    src: "env/app.env.j2"
+    dest: "{{ app_dir }}/.env/app.env"
+
+- name: Configure | Copy env app 2 file
+  template:
+    src: "env/app_2.env.j2"
+    dest: "{{ app_dir }}/.env/app_2.env"
+  when: inventory_hostname in groups['compose_app_two']
+
+- name: Configure | Copy env app 3 file
+  template:
+    src: "env/app_3.env.j2"
+    dest: "{{ app_dir }}/.env/app_3.env"
+  when: inventory_hostname in groups['compose_app_three']

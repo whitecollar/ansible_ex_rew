@@ -1,0 +1,14 @@
+[all]
+[all:children]
+gitlab
+gitlab_runner
+
+[gitlab]
+infra-gitlab
+
+[gitlab_runner]
+
+
+[tests]
+puv-dev-infra-01
+puv-dev-infra-01

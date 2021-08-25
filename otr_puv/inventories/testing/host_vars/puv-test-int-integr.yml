@@ -1,0 +1,29 @@
+---
+
+config_dir: /u01
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/int-integr
+deploy_name: apache_nifi
+
+nifi_url: "http://{{ inventory_hostname }}.otr.ru:8080"
+nifi_registry_url: "http://{{ inventory_hostname }}.otr.ru:18080"
+nifi_routing_port: "9088"
+
+# набор переменных для связи с ЕГИССО
+egisso_kmsz_adress: "http://172.31.203.225:9084"
+egisso_lmsz_adress: "http://172.31.203.225:9087"
+egisso_dwh_adress: "http://172.31.203.225:9086"
+egisso_ads_adress: "http://172.31.203.225:9089"
+
+# переменные для подключения к RabbitMQ ЕГИССО
+nifi_rabbit_ip: 172.31.203.228
+nifi_rabbit_port: 5672
+
+# токен для подключения nifi
+
+nifi_auth_token: "Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1c2VyIjp7InV1aWQiOm51bGwsImZ1bGxOYW1lIjoicHV2LWludGVnciIsImRlcGFydG1lbnRVdWlkIjpudWxsfSwicGVybWlzc2lvbnMiOnsibXN6X3NldHRpbmdzIjp7Im1zel9zZXRfcmVnaW9uIjp7Im1zel9zZXRfcmVnaW9uIjpbInZpZXdfZm9ybSIsInZpZXdfbGlzdCJdfX0sInN0b3JhZ2UiOnsic190aHJlZSI6eyJmaWxlIjpbIm90bF9yZXEiLCJ1cGxvYWQiXX19fSwiaXNzIjoiUFVWIEF1dGgiLCJqdGkiOiIwN2Q3OTk2ZS1hN2ZmLTQ4NzEtYWMzYi0zMTkwNjY2ZTRjNmIiLCJpYXQiOjE2MTM4MzA1ODd9.Yi1_AhO6q4p9cvsG_zUkC1Ei5dCAxWl3ZQAGihhHbdmyVms0ZTUGJbRqGlxldw_49jor5TZL0OHWSSUKh17gk4GTZjLx0Ls3UkcJ4mDS9HAT7uu5m877R6LBandYaWKCgfsIUiRyceSGXiLEwJgiqeNrmJSbteEhl8xGTl8eT1LwVH4uDRmvtb_B-CPaNwmMzGTyRmwI9T_y8vhBeByjjIFw89Qq3aKaTxhgF_fFiDLILR_QzNjjMPQlrWWl5bDK2HS9xO4B29RHdfhsaK1dNL9RGibc7OPUmfnWbeHKKjaTbgJfTtJhGUI8p3z927R_MyayPCgwkeACuwHPw18aJg"
+nifi_minio_token: "eyJhbGciOiJSUzI1NiJ9.eyJ1c2VyIjp7InV1aWQiOm51bGwsImZ1bGxOYW1lIjoicHV2LWludGVnciIsImRlcGFydG1lbnRVdWlkIjpudWxsfSwicGVybWlzc2lvbnMiOnsibXN6X3NldHRpbmdzIjp7Im1zel9zZXRfcmVnaW9uIjp7Im1zel9zZXRfcmVnaW9uIjpbInZpZXdfZm9ybSIsInZpZXdfbGlzdCJdfX0sInN0b3JhZ2UiOnsic190aHJlZSI6eyJmaWxlIjpbIm90bF9yZXEiLCJ1cGxvYWQiXX19fSwiaXNzIjoiUFVWIEF1dGgiLCJqdGkiOiIwN2Q3OTk2ZS1hN2ZmLTQ4NzEtYWMzYi0zMTkwNjY2ZTRjNmIiLCJpYXQiOjE2MTM4MzA1ODd9.Yi1_AhO6q4p9cvsG_zUkC1Ei5dCAxWl3ZQAGihhHbdmyVms0ZTUGJbRqGlxldw_49jor5TZL0OHWSSUKh17gk4GTZjLx0Ls3UkcJ4mDS9HAT7uu5m877R6LBandYaWKCgfsIUiRyceSGXiLEwJgiqeNrmJSbteEhl8xGTl8eT1LwVH4uDRmvtb_B-CPaNwmMzGTyRmwI9T_y8vhBeByjjIFw89Qq3aKaTxhgF_fFiDLILR_QzNjjMPQlrWWl5bDK2HS9xO4B29RHdfhsaK1dNL9RGibc7OPUmfnWbeHKKjaTbgJfTtJhGUI8p3z927R_MyayPCgwkeACuwHPw18aJg"
+
+# Если по указанному пути файл отсутствует, необходимо обязательно положить по указанному пути этот файл (See more - https://confluence.otr.ru/pages/viewpage.action?pageId=138615748 )
+
+nifi_csv_file: "conf/routing-nodes.csv"

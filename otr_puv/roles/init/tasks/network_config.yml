@@ -1,0 +1,46 @@
+---
+  
+# Сетевые настройки
+#   - DNS1=172.31.198.254
+#   - DNS2=172.31.2.113
+#   - DNS3=172.31.4.4
+#   - DOMAIN="pds.otr.ru otr.ru"
+
+- name: Network Config | Add DNS servers addresses and DNS search 
+  community.general.nmcli:
+    conn_name: eno16780032
+    type: ethernet
+    ifname: eno16780032
+    dns4:
+    - 172.31.4.4
+    - 172.31.2.113
+    - 172.31.198.254
+    dns4_search:
+    - otr.ru
+    - pds.otr.ru
+    state: present
+  register: line_config_edit
+  when: ansible_os_family == "Redhat"
+
+- name:
+  community.general.nmcli:
+    conn_name: ens160
+    type: ethernet
+    dns4:
+    - 172.31.4.4
+    - 172.31.2.113
+    - 172.31.198.254
+    dns4_search:
+    - otr.ru
+    - pds.otr.ru
+    state: present
+  register: line_config_edit
+  when: ansible_os_family == "CentOS" 
+
+# Перезагрузжаем сетевой интерфейс, если внесены изменения
+- name: Network Config | Network restart
+  systemd: 
+    name: network
+    state: reloaded
+  when: line_config_edit.changed
+ 

@@ -1,0 +1,11 @@
+---
+
+deploy_registry_image_app: registry-dpr-gitlab.otr.ru:5005/registry/docker-images/webtail-logs
+deploy_branch_app: v1
+deploy_name_app: webtail-logs
+deploy_ports_app:
+  - 18000:8080
+deploy_volumes_app:
+  - "{{ app_dir }}/logs/:/opt/app/logs"
+  - "{{ app_dir }}/logs_ufos/:/opt/app/logs_ufos"
+  

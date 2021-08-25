@@ -1,0 +1,76 @@
+version: '2'
+services:
+  dpr-gitlab-runner:
+    container_name: dpr-gitlab-runner
+    hostname: 'puv-dev-dpr-gitlab-runner.otr.ru'
+    image: "registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images/gitlab-runner-alpine:latest"
+    restart: always
+    volumes:
+      - ./dpr_certs:/certs
+      - ./dpr-gitlab-runner/data:/home/gitlab_ci_multi_runner/data
+      - ./dpr-gitlab-runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    environment:
+      - CI_SERVER_URL=https://dpr-gitlab.otr.ru/ci
+      - RUNNER_TOKEN=uMPi9z-E3v85HThLtkN5
+      - RUNNER_DESCRIPTION=Dpr Runner
+      - RUNNER_EXECUTOR={{ runner_executor }}
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    dns_search:
+      - otr.ru
+    networks:
+      dpr-gitlab-net:
+    logging:
+       driver: "json-file"
+       options:
+         max-file: "5"
+         max-size: "10m"
+
+{% if inventory_hostname == "puv-dev-gitlab-runner" %}
+  infra-gitlab-runner:
+    container_name: infra-gitlab-runner
+    hostname: 'puv-dev-infra-gitlab-runner.otr.ru'
+    image: "registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images/gitlab-runner-alpine:latest"
+    restart: always
+    volumes:
+      - ./infra_certs:/certs
+      - ./infra-gitlab-runner/data:/home/gitlab_ci_multi_runner/data
+      - ./infra-gitlab-runner/config:/etc/gitlab-runner
+      - ./ssh/ansible_puv_user/:/home/gitlab-runner/.ssh:rw
+    environment:
+      - CI_SERVER_URL=https://infra-gitlab.otr.ru/ci
+      - RUNNER_TOKEN=JUyFZgszq65yhZZxWVpG
+      - RUNNER_DESCRIPTION=Infra Ansible Runner
+      - RUNNER_EXECUTOR={{ runner_executor }}
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    dns_search:
+      - otr.ru
+    networks:
+      dpr-gitlab-net:
+    logging:
+       driver: "json-file"
+       options:
+         max-file: "5"
+         max-size: "10m"
+{% endif %}
+
+networks:
+    dpr-gitlab-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.20.10.0/24
+              gateway: 10.20.10.1

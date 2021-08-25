@@ -1,0 +1,17 @@
+---
+
+- name: Create Systemd Java 8 | Copy unit 
+  template:
+    src: "java8_systemd.service.j2"
+    dest: "/etc/systemd/system/{{ artifacts_name_2 }}.service"
+
+- name: Create Systemd Java 8 | Copy env app file
+  template:
+    src: "java8_systemd.env.j2"
+    dest: "/etc/systemd/system/{{ artifacts_name_2 }}.env"
+
+- name: Create Systemd Java 8 | Enable and start java unit 
+  systemd:
+    name: "{{ artifacts_name_2 }}.service"
+    enabled: yes
+    state: started

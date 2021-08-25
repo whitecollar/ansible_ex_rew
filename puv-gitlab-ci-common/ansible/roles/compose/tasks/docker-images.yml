@@ -1,0 +1,66 @@
+---
+
+# Логинимся на наш реджистри
+- name: Docker Images | Log into private registry and force re-authorization
+  docker_login:
+    registry: "{{ deploy_registry_url }}"
+    username: "{{ deploy_registry_user }}"
+    password: "{{ deploy_registry_pass }}"
+    reauthorize: true
+  no_log: false
+  changed_when: false
+  tags:
+    - first 
+    - second
+    - front
+    - nifi
+    - fias
+
+# Скачваем нужные изображения.
+- name: Docker Images | Pull an images
+  docker_image:
+    name: "{{ deploy_image }}"
+    source: pull
+    force_source: true
+  tags:
+    - first 
+    - second
+    - front
+    - nifi
+    - fias
+
+# Тегируем изображение для того, чтобы обновить образ на хосте и не править файл docker-compose
+- name: Docker Images | Add tag via deploy branch to image
+  shell: "docker tag {{ deploy_image }} {{ deploy_registry_image }}:{{ deploy_branch }}"
+  tags:
+    - first 
+    - front
+    - nifi
+    - fias
+
+- name: Docker Images | Add tag via deploy branch to image
+  shell: "docker tag {{ deploy_image }} {{ deploy_registry_image_2 }}:{{ deploy_branch_2 }}"
+  tags:
+    - second
+
+### Модуль перестал работать по непонятным причинам на одном из хостов, возможно, он на нём и не работал.
+# - name: Docker Images | Add tag via deploy branch to image
+#   community.general.docker_image:
+#     name: "{{ deploy_image }}"
+#     repository: "{{ deploy_registry_image }}:{{ deploy_branch }}"
+#     force_tag: yes
+#     source: local
+#   tags:
+#     - first 
+#     - front
+#     - nifi
+#     - fias
+
+# - name: Docker Images | Pull an images 2
+#   community.general.docker_image:
+#     name: "{{ deploy_image }}"
+#     repository: "{{ deploy_registry_image_2 }}:{{ deploy_branch_2 }}"
+#     force_tag: yes
+#     source: local
+#   tags:
+#     - second

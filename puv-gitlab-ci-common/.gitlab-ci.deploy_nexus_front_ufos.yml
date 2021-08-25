@@ -1,0 +1,20 @@
+stages:
+  - deploy-nexus
+
+deploy-nexus:
+  stage: deploy-nexus
+  only:
+    - "/^release-\\w+/"
+  before_script:
+    - apk add curl zip git
+    # Подключаемся к текущему репозиторию гитлаба 
+    - git remote set-url origin https://$GIT_USER:$GIT_PASS@$PROJECT_URL
+    # Задаём e-mail пользователя для дальнейших изменений
+    - git config --global user.email "$GIT_EMAIL_USER"
+    # Задаём имя пользователя для дальнейших изменений
+    - git config --global user.name "$GIT_USER"
+    - export LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+  script:
+    - cd $PATH_TO_ARTIFACTS && zip -r ${LAST_TAG}.zip ./*
+    - curl -v -u $NEXUS_USER:$NEXUS_PASS --upload-file "$PATH_TO_ARTIFACTS/${LAST_TAG}.zip" "http://nexus.otr.ru/content/repositories/puv/releases/${CI_COMMIT_BRANCH}/${CI_PROJECT_NAME}/${LAST_TAG}.zip"
+  

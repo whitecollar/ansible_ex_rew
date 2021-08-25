@@ -1,0 +1,36 @@
+---
+
+# Запускаем docker и делаем ему автостарт
+- name: Docker Configure | Stop docker
+  service:
+    name: docker
+    state: stopped
+
+# Создаём рабочую директорию
+- name: Docker Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ db_directory }}/docker"
+    owner: root
+    group: root
+    mode: 1701
+
+# Удаляем старую директорию
+- name: Docker Configure | Delete old directory
+  file:
+    path: /var/lib/docker
+    state: absent
+
+# Создаём символическую ссылку на новую рабочую диреткорию
+- name: Docker Configure | Create a symbolic link
+  file:
+    src: "{{ db_directory }}/docker"
+    dest: /var/lib/docker
+    state: link
+
+# Запускаем docker и делаем ему автостарт
+- name: Docker Configure | Start docker
+  service:
+    name: docker
+    state: started
+    enabled: yes

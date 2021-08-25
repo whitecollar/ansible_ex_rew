@@ -1,0 +1,87 @@
+version: '2'
+services:
+  redis_commander:
+    container_name: redis_commander
+    hostname: redis_commander
+    image: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images/redis-comander:latest
+    restart: always
+    environment:
+    - REDIS_HOST=10.20.10.10
+    - REDIS_PORT={{ redis_port }}
+    - REDIS_PASSWORD={{ redis_password }}
+    ports:
+    - "9081:8081"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    dns_search:
+      - otr.ru
+    networks:
+      - dpr-redis-net
+    restart: unless-stopped
+
+  redis_master:
+    container_name: redis_master
+    hostname: redis_master
+    image: 'registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images/redis:latest'
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD={{ redis_password }}
+    volumes:
+      - './data:/redis_data'
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    dns_search:
+      - otr.ru
+    networks:
+      dpr-redis-net:
+        ipv4_address: 10.20.10.10
+    restart: unless-stopped
+
+  redis_slave_01:
+    image: 'registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images/redis:latest'
+    container_name: redis_slave_01
+    hostname: redis_slave_01
+    ports:
+      - '6379'
+    depends_on:
+      - redis_master
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis_master
+      - REDIS_MASTER_PORT_NUMBER={{ redis_port }}
+      - REDIS_MASTER_PASSWORD={{ redis_password }}
+      - REDIS_PASSWORD=Ujv5XqKJ6TM3rL2unFxt637d
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    dns_search:
+      - otr.ru
+    networks:
+      - dpr-redis-net
+    restart: unless-stopped
+
+networks:
+    dpr-redis-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.20.10.0/24
+              gateway: 10.20.10.1
+volumes: 
+    redis-master:

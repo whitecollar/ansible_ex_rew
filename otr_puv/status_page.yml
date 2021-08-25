@@ -1,0 +1,6 @@
+---
+
+- hosts: status_page
+  become: true
+  roles:
+    - status_page

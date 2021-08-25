@@ -1,0 +1,21 @@
+---
+- hosts: "{{ variable_host | default('gitlab')}}"
+  become: true
+
+# Обязательно заменить переменную нужным именем бэкапа!!!
+  vars:
+    backup_name: "{{ BACKUP=1586935913_2020_04_15_12.9.2_gitlab_backup }}"
+
+  tasks:
+
+# Останавливаем контейнер
+  - name: Stop container
+    shell: "docker exec -t gitlab gitlab-ctl stop"
+  
+# Восстанавливаем бэкап
+  - name: Restore backup
+    shell: docker exec -t gitlab gitlab-backup restore {{ backup_name }}
+
+# Запускаем контейнер
+  - name: Start container
+    shell: docker exec -t gitlab gitlab-ctl start

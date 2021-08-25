@@ -1,0 +1,12 @@
+---
+
+# - include: network_config.yml
+
+- include: repository.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution != "CentOS"
+
+- include: install.yml
+
+# - include: network_config.yml
+
+- include: misc.yml

@@ -1,0 +1,30 @@
+---
+
+# Копируем скрипт бэкапа на хост
+- name: Backup | Copy gitlab-docker-backup.sh script to host
+  template:
+    src: "gitlab-docker-backup.sh."
+    dest: "/root/gitlab-docker-backup.sh"
+    owner: user
+    mode: '0766'
+    force: yes
+
+# Копируем скрипт восстановления бэкапа на хост
+- name: Backup | Copy gitlab-docker-restore.sh script to host
+  template:
+    src: "gitlab-docker-backup.sh."
+    dest: "/root/gitlab-docker-backup.sh"
+    owner: user
+    mode: '0766'
+    force: yes
+
+# Создаём запуск бэкапов по крону
+- name: Backup | Cron job
+  cron:
+    name: "### backup cron job"
+    minute: "{{ cron_backup_minutes }}"
+    hour: "{{ cron_backup_hours }}"
+    day: "{{ cron_backup_days }}"
+    month: "{{ cron_backup_months }}"
+    weekday: "{{ cron_backup_weekdays }}"
+    job: /root/gitlab-docker-backup.sh 2>&1

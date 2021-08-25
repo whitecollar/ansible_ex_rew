@@ -1,0 +1,14 @@
+---
+
+# Версиии ПО
+docker-compose_version: 1.25.4 # Перестаёт работать переменная, если запустить плейбук ещё раз, баг или фича? Пока не используется.
+
+# Набор ПО для установки
+docker_pkgs:
+  - docker
+
+docker_pkgs_8:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+

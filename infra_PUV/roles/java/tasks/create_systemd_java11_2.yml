@@ -1,0 +1,17 @@
+---
+
+- name: Create Systemd Java 11 | Copy unit 
+  template:
+    src: "java11_systemd.service_2.j2"
+    dest: "/etc/systemd/system/{{ artifacts_name_2 }}.service"
+
+- name: Create Systemd Java 11 | Copy env app file
+  template:
+    src: "java11_systemd.env.j2"
+    dest: "/etc/systemd/system/{{ artifacts_name_2 }}.env"
+
+- name: Create Systemd Java 11 | Enable and start java unit 
+  systemd:
+    name: "{{ artifacts_name_2 }}.service"
+    enabled: yes
+    state: started

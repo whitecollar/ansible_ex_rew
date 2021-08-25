@@ -1,0 +1,8 @@
+---
+
+# Для деплоя на бездокеровую среду
+- import_playbook: init.yml
+- import_playbook: pip.yml
+- import_playbook: java.yml
+- import_playbook: proxy.yml
+- import_playbook: nginx_dockerless.yml

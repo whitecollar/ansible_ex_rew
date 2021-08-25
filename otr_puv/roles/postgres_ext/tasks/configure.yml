@@ -1,0 +1,50 @@
+---
+
+# Создаём рабочую директорию
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres"
+    owner: root
+    group: root
+
+# Создаём рабочую директорию конфиг файлов
+- name: Configure | Create config dir
+  file:
+    state: directory
+    path: "{{ app_dir }}/postgres/configs"
+    owner: root
+    group: root
+
+#  Создаем файл лога для pgbouncer, так как он не стартует без него, туда пишется инфа о всех коннектах
+- name: Configure | Create log file
+  copy:
+    content: ""
+    dest: "{{ app_dir }}/postgres/pgbouncer_connection.log"
+    force: no
+    mode: 0777
+
+#  Копируем конфиг pg_hba 
+- name: Configure | Configure pg_hba.conf file
+  template:
+- name: Configure | Copy pgbouncer config
+  template:
+    dest: "{{ app_dir }}/postgres/configs/pgbouncer.ini"
+
+#  Копируем список разрешенных пользователй на подключение через pgbouncer
+- name: Configure | Copy userlist.txt
+  template:
+    src: "userlist.txt.j2"
+    dest: "{{ app_dir }}/postgres/configs/userlist.txt"
+
+#  Копируем файл docker-compose.yml для запуска сервисов
+- name: Configure | Copy docker-compose.yml file
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ app_dir }}/postgres/docker-compose.yml"
+
+#  Копируем скрипт которйы создает нужных пользователей для pgbouncer
+- name: Configure | gen_userlist.sh
+  copy:
+    src: "gen_userlist.sh"
+    dest: "{{ app_dir }}/postgres/gen_userlist.sh"

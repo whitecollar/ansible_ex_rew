@@ -1,0 +1,17 @@
+---
+#  Запуск сервисов через docker-compose
+- name: Docker compose up | Docker compose up
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    state: present
+    pull: no
+  when: inventory_hostname != "puv-dev-int-fias-app"
+
+# Костыль для ФИАС на деве, проблема с pip модулем docker-compose
+# Не было особо времени разобраться, что там не так
+- name: Docker compose up | Docker compose up
+  shell: "docker-compose up -d"
+  delegate_to: "{{ inventory_hostname }}"
+  args:
+    chdir: "{{ app_dir }}"
+  when: inventory_hostname == "puv-dev-int-fias-app"

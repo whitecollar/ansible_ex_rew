@@ -1,0 +1,9 @@
+---
+
+- name: Cron Tasks | Create cron for clean docker
+  cron:
+    name: Clean Docker
+    minute: "0"
+    user: root
+    job: "docker system prune -a -f > /dev/null > 2&1"
+    

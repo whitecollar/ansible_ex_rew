@@ -1,0 +1,20 @@
+[databases]
+* = host= {{ psql_ip }} port={{ psql_port }} pool_size={{ pool_size }} reserve_pool={{ reserve_pool }}
+[pgbouncer]
+# Generic settings
+listen_addr = 0.0.0.0
+listen_port = 5432
+ignore_startup_parameters = extra_float_digits
+auth_type = md5
+auth_file = /etc/pgbouncer/userlist.txt
+logfile=/etc/pgbouncer/connection.log
+log_connections= 1
+log_disconnections=1
+log_pooler_errors=1
+log_stats=1
+admin_users={{ admin_users }}
+pool_mode={{ pool_mode }}
+max_client_conn={{ max_client_conn }}
+default_pool_size={{ default_pool_size }}
+max_db_connections={{ max_db_connections }}
+max_user_connections={{ max_user_connections }}

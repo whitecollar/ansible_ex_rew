@@ -1,0 +1,25 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/reg
+deploy_name: reg-backend
+deploy_ports:
+  - 18080:18080
+  - 8500:8500
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"
+
+deploy_registry_image_2: registry-dpr-gitlab.otr.ru:5005/puv/reg-ufos
+deploy_name_2: reg-ufos-backend
+deploy_ports_2:
+  - 18081:18080
+deploy_exposed_ports_2:
+deploy_volumes_2:
+  - "{{ app_dir }}/logs_ufos/:/usr/share/jetty/logs"
+
+app_db: jdbc:postgresql://puv-test2-int-reg-db:5432/reg_bos
+
+db_login: puv
+db_password: Oracle33
+db_path: puv-{{ var_env }}-int-reg-db
+
+db_ufos_host_prop: "jdbc:postgresql://puv-test2-int-reg-db:5432/reg_bos"

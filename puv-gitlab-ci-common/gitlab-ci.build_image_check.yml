@@ -1,0 +1,74 @@
+stages:
+  - build-image
+  - build-check
+
+# Собираем докер-образ 
+.build-image: 
+  stage: build-image
+  tags:
+    - projects_puv
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u"$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+build-image-rc:
+  extends: .build-image
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: "$CI_COMMIT_BRANCH =~ /^release-\\w+/"
+    - if: '$CI_COMMIT_TAG != ""'
+      when: never
+
+build-image-new-stands:
+  extends: .build-image
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release-\\w+/"
+    - if: '$CI_COMMIT_TAG != ""'
+      when: never
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u"$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:testing .
+    - docker push $CI_REGISTRY_IMAGE:testing
+
+# build-image-tag:
+#   extends: .build-image
+#   rules:
+#     - if: '$CI_COMMIT_TAG != ""'
+#   variables:
+#     IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+
+build-image-master:
+  extends: .build-image
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_TAG != ""'
+      when: never
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:master
+
+build-check:
+  stage: build-check
+  tags:
+    - projects_puv
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_TAG != ""'
+      when: never
+  script:
+    - echo "Мердж реквест прошёл!!!"
+    # - echo ${CI_API_V4_URL}
+    # - echo "CI_PROJECT_ID ${CI_PROJECT_ID}"
+    # - echo "CI_COMMIT_SHA ${CI_COMMIT_SHA}"
+    # - "export MR_ID=$(curl --silent --request GET --header \"PRIVATE-TOKEN: $GITLAB_TOKEN_FOR_CI\" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests | jq \".[] | if .sha == \\\"${CI_COMMIT_SHA}\\\" then .id else {} end\" | grep --invert-match {})"
+    # - "export MR_TITLE=$(curl --silent --request GET --header \"PRIVATE-TOKEN: $GITLAB_TOKEN_FOR_CI\" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests | jq \".[] | if .sha == \\\"${CI_COMMIT_SHA}\\\" then .title else {} end\" | grep --invert-match {})"
+    # - "export MR_WIP=$(curl --silent --request GET --header \"PRIVATE-TOKEN: $GITLAB_TOKEN_FOR_CI\" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests | jq \".[] | if .sha == \\\"${CI_COMMIT_SHA}\\\" then .work_in_progress else {} end\" | grep --invert-match {})"
+    # - "export MR_UPVOTES=$(curl --silent --request GET --header \"PRIVATE-TOKEN: $GITLAB_TOKEN_FOR_CI\" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests | jq \".[] | if .sha == \\\"${CI_COMMIT_SHA}\\\" then .upvotes else {} end\" | grep --invert-match {})"
+    # - "export MR_DOWNVOTES=$(curl --silent --request GET --header \"PRIVATE-TOKEN: $GITLAB_TOKEN_FOR_CI\" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests | jq \".[] | if .sha == \\\"${CI_COMMIT_SHA}\\\" then .downvotes else {} end\" | grep --invert-match {})"
+    # - MR_VOTES=$(expr ${MR_UPVOTES} - ${MR_DOWNVOTES})
+    # - NEED_VOTES_REAL=${NEED_VOTES:-1}
+    # - echo "MR_ID ${MR_ID} MR_TITLE ${MR_TITLE} MR_WIP ${MR_WIP} MR_UPVOTES ${MR_UPVOTES} MR_DOWNVOTES ${MR_DOWNVOTES}"
+    # - echo "MR_VOTES ${MR_VOTES} Up vote = 1, down vote = -1, MR OK if votes >=${NEED_VOTES_REAL}"
+    # - if [ "${MR_VOTES}" -ge "$(expr ${NEED_VOTES_REAL})" ]; then echo "MR OK"; else echo "MR ERROR Need more votes"; exit 1; fi

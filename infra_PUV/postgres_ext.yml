@@ -1,0 +1,6 @@
+---
+
+- hosts: postgres_ext
+  become: true
+  roles:
+    - postgres_ext

@@ -1,0 +1,109 @@
+[app]
+[app:children]
+app_elk
+app_one
+app_two
+app_three
+
+[compose_app]
+[compose_app:children]
+fias
+auth_admin
+proxy
+overpay
+s3_app
+
+[compose_app_two]
+[compose_app_two:children]
+personals
+
+[compose_app_three]
+[compose_app_three:children]
+constructor_test
+
+[app_elk]
+puv-test2-int-elk-01 config_dir="/egisso"
+
+[status_page]
+puv-test2-int-elk-01 config_dir="/egisso"
+
+[app_one]
+puv-test2-int-constructor 
+puv-test2-int-payment-app-01 config_dir="/egisso"
+puv-test2-int-spark
+
+[app_two]
+puv-test2-int-nsi-app config_dir="/egisso"
+puv-test2-int-assign-app-01 config_dir="/egisso"
+puv-test2-int-reg-app-01 config_dir="/egisso"
+
+[app_three]
+puv-test2-int-assign-app-01 config_dir="/egisso"
+
+[apache_nifi]
+puv-test2-int-integr  config_dir="/u01"
+
+[auth_admin]
+puv-test2-int-auth-admin
+
+[fias]
+puv-test2-int-fias-app
+
+[redis]
+puv-test2-int-spark
+
+[personals]
+puv-test2-eld-app
+
+[s3_app]
+puv-test2-int-s3-server
+
+[consul]
+puv-test2-int-consul
+
+[proxy]
+puv-test2-int-proxy-01 config_dir="/u01"
+
+[constructor_test]
+
+[overpay]
+puv-test2-int-overpay-app-01
+
+[ufos]
+puv-test2-int-nsi-app config_dir="/egisso"
+puv-test2-int-assign-app-01 config_dir="/egisso"
+puv-test2-int-reg-app-01 config_dir="/egisso"
+
+[arenadata_master]
+puv-test2-int-eld-gp-master
+
+[arenadata_node]
+puv-test2-int-eld-gp-segment-01
+puv-test2-int-eld-gp-segment-02
+puv-test2-int-eld-gp-segment-03
+puv-test2-int-eld-gp-segment-04
+
+[postgres]
+puv-test2-int-assign-db config_dir="/egisso"
+puv-test2-int-nsi-db
+puv-test2-int-payment-db config_dir="/egisso"
+puv-test2-int-reg-db config_dir="/egisso"
+
+[apache_spark]
+puv-test2-int-spark
+
+[postgres]
+puv-test2-int-nsi-db config_dir="/egisso"
+puv-test2-int-assign-db config_dir="/egisso"
+puv-test2-int-reg-db
+puv-test2-int-payment-db
+
+[postgres_ext]
+
+[apache_kafka]
+puv-test2-int-kafka
+
+[bos_db]
+puv-test2-int-nsi-db
+puv-test2-int-assign-db config_dir="/egisso"
+puv-test2-int-reg-db

@@ -1,0 +1,7 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/overpay-app
+deploy_name: overpay-backend
+deploy_ports: 8080:8080
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"

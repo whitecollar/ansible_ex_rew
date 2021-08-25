@@ -1,0 +1,16 @@
+---
+
+# Фикс для докера
+# По неясной причине docker перестаёт создавать нужную цепочку в правилах iptables
+
+# Отключаем сеть докера
+- name: Portainer Install | Docker ip down
+  shell: "ip link set docker0 down"
+
+# Удаляем бридж докера
+- name: Portainer Install | Docker delete bridge
+  shell: "brctl delbr docker0"
+
+# Перезапускаем докер
+- name: Portainer Install | Docker restart
+  shell: "systemctl restart docker"

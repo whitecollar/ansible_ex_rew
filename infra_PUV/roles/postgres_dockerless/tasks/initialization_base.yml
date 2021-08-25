@@ -1,0 +1,60 @@
+---
+
+# Создаем сервисную учетную запись для приложения
+- name: Initialization Base | create users
+  become: true
+  become_user: postgres
+  postgresql_user:
+    encrypted: true
+    name: "{{ local_db_user }}"
+    password: "{{ local_db_password }}"
+    role_attr_flags: "{{ local_pg_role_attr_flags }}"
+    state: present
+
+# Создаем базу для приложения
+- name: Initialization Base | create databases
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: "{{ local_db_name }}"
+    owner: "{{ local_db_user }}"
+    state: present
+    lc_collate: "en_US.UTF-8"
+    lc_ctype: "en_US.UTF-8"
+    encoding: "UTF8"
+    template: "template0"
+
+# Выдаем права на базу и на обьекты для пользователя puv
+- name: Initialization Base | GRANT ALL PRIVILEGES ON DATABASE
+  community.general.postgresql_privs:
+    db: postgres
+    privs: ALL
+    type: database
+    obj: "{{ local_db_name }}"
+    role: "{{ local_db_user }}"
+
+- name: Initialization Base | ALTER DEFAULT PRIVILEGES ON DATABASE
+  community.general.postgresql_privs:
+    db: "{{ local_db_name }}"
+    objs: ALL_DEFAULT
+    privs: ALL
+    type: default_privs
+    role: "{{ local_db_user }}"
+    grant_option: yes
+
+- name: Initialization Base | Reassign all object in database bar owned by puv
+  community.general.postgresql_owner:
+    db: "{{ local_db_name }}"
+    obj_name: public
+    obj_type: schema
+    new_owner: "{{ local_db_user }}"
+
+- name: Initialization Base | Grant privs to puv and reader on database library
+  community.general.postgresql_privs:
+    db: "{{ local_db_name }}"
+    state: present
+    privs: ALL
+    type: schema
+    objs: public
+    roles: "{{ local_db_user }}"
+    grant_option: yes

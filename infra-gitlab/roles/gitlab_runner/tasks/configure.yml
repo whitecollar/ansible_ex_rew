@@ -1,0 +1,27 @@
+---
+
+  # Создаём рабочую директорию
+  - name: Configure | Create work directory
+    file: 
+      state: directory
+      path: "{{ db_directory }}/gitlab_runner/"
+  
+  # Создаём рабочую директорию самого раннера
+  - name: Configure | Create work directory for runner
+    file: 
+      state: directory
+      path: "{{ db_directory }}/gitlab_runner/gitlab-runner/"
+  
+  # Копируем файл для запуска контейнера
+  - name: Configure | Copy docker-compose
+    copy:
+      src: "docker-compose.yml"
+      dest: "{{ db_directory }}/gitlab_runner/"
+  
+  # Копируем сертификаты
+  - name: Configure | Copy certs
+    copy:
+      src: "certs"
+      dest: "{{ db_directory }}/gitlab_runner/"
+
+  

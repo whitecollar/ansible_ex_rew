@@ -1,0 +1,11 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/int-eld-drools
+deploy_name: drools-backend
+deploy_ports:
+  - 8090:8080
+deploy_volumes: "{{ app_dir }}/logs/:/app/logs"
+
+env_port: "8090"
+
+app_dir: "{{ config_dir }}/app/spark/spark_master"

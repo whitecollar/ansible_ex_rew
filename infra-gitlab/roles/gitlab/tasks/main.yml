@@ -1,0 +1,7 @@
+---
+
+- include: configure.yml
+
+- include: docker-compose_up.yml
+
+- include: backups.yml

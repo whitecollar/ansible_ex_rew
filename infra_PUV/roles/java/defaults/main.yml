@@ -1,0 +1,8 @@
+---
+
+java8_inst_dir: "{{ config_dir }}/jdk1.8.0_271"
+# java8_inst_dir: "{{ config_dir }}/java8"
+java11_inst_dir: "{{ config_dir }}/jdk-11.0.2"
+# java11_inst_dir: "{{ config_dir }}/java11"
+java8_pkg_name: jdk-8u271-linux-x64.tar.gz
+java11_pkg_name: jdk-11.0.9_linux-x64_bin.tar.gz

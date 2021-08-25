@@ -1,0 +1,10 @@
+---
+
+# Запускаем контейнеры указанные в файле docker-compose
+- name: Install | Docker compose up
+  docker_compose:
+    project_src: "{{ db_directory }}/dpr-gitlab"
+    remove_orphans: true
+    state: present
+    recreate: always
+    pull: yes

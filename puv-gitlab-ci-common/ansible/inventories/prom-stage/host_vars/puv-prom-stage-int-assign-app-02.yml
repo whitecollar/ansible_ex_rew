@@ -1,0 +1,10 @@
+---
+
+artifacts_name: assign
+artifacts_name_2: assign-ufos
+
+env_port: 18080
+env_port_2: 18081
+
+XMX: 4096m
+JAVA_ARGS: ""

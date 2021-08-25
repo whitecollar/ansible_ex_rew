@@ -1,0 +1,30 @@
+---
+
+# Останавливаем контейнер.
+- name: Docker Update | Stop a container 3
+  docker_container:
+    name: "{{ deploy_name_3 }}"
+    state: stopped
+    timeout: 600
+  ignore_errors: yes
+  
+# Удаляем контейнер.
+- name: Docker Update | Delete a container 3
+  docker_container:
+    name: "{{ deploy_name_3 }}"
+    state: absent
+    timeout: 600 
+  ignore_errors: yes
+
+# Создаём контейнер заново.
+- name: Docker Update | Update a container 3
+  docker_container:
+    name: "{{ deploy_name_3 }}"
+    image: "{{ deploy_image }}"
+    ports: "{{ deploy_ports_3 }}"
+    exposed_ports: "{{ deploy_exposed_ports }}"
+    volumes: "{{ deploy_volumes_3 }}"
+    env_file: "{{ app_dir }}/.env3"
+    restart_policy: always
+    state: started
+    timeout: 600

@@ -1,0 +1,6 @@
+---
+
+- hosts: personals
+  become: true
+  roles:
+    - personals

@@ -1,0 +1,8 @@
+---
+
+- include : configure.yml
+- include : download_fias.yml
+  when: create_fias_dir.changed
+- include : docker-compose-up.yml
+- include: import_fias.yml
+  when: unarch_fias.changed

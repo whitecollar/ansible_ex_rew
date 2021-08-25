@@ -1,0 +1,12 @@
+---
+
+deploy_registry_image_app: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images
+deploy_branch_app: webtail-logs
+deploy_name_app: webtail-logs
+deploy_ports_app:
+  - 18000:8080
+deploy_volumes_app:
+  - "{{ app_dir }}/logs/:/opt/app/logs"
+deploy_volumes_app_2:
+  - "{{ app_dir }}/logs/:/opt/app/logs"
+  - "{{ app_dir }}/logs_ufos/:/opt/app/logs_ufos"

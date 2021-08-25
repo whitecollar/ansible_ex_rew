@@ -1,0 +1,26 @@
+---
+
+# Сервер гитлаба
+gitlab_coordinator: "https://dpr-gitlab.otr.ru/"
+# Ключ для подключения
+gitlab_token: uMPi9z-E3v85HThLtkN5
+# Подпись ранера, чтобы понимать, для чего он
+runner_description: puv_runner
+# Тэг раннера, чтобы использовать его в ci/cd
+runner_tags: projects_puv
+# Задача, которые будет выполнять ранер
+runner_executor: docker
+# Образ докера, в котром будут выполняться задачи
+runner_image: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images:dind-19-03-8
+helper_image: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images:gitlab-runner-helper-x86_64
+
+# Сервер гитлаба
+gitlab_coordinator_2: "https://infra-gitlab.otr.ru/"
+# Ключ для подключения
+gitlab_token_2: JUyFZgszq65yhZZxWVpG
+# Подпись ранера, чтобы понимать, для чего он
+runner_description_2: infra_puv_runner
+# Тэг раннера, чтобы использовать его в ci/cd
+runner_tags_2: ansible_puv
+# Задача, которые будет выполнять ранер
+runner_executor_2: docker

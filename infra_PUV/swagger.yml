@@ -1,0 +1,6 @@
+---
+
+- hosts: swagger
+  become: true
+  roles:
+    - swagger

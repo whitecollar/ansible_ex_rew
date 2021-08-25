@@ -1,0 +1,4 @@
+---
+
+- include : configure.yml
+- include : docker_compose_up.yml

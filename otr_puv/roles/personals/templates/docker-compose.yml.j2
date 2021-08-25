@@ -1,0 +1,152 @@
+version: '2'
+
+services:
+  app:
+    container_name: {{ deploy_name }}
+    image: {{ deploy_registry_image }}:{{ deploy_branch }}
+    env_file:
+      - ./.env/app.env
+    ports:
+      - {{ env_port }}:{{ env_port }}
+    volumes:
+        - "{{ app_dir }}/logs/:/app/log"
+
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    networks:
+      - dpr-app-net
+    restart: unless-stopped
+
+  app_2:
+    container_name: {{ deploy_name_2 }}
+    image: {{ deploy_registry_image_2 }}:{{ deploy_branch }}
+    env_file:
+      - ./.env/app_2.env
+    ports:
+      - {{ env_port_2 }}:{{ env_port }}
+    volumes:
+        - "{{ app_dir }}/logs/:/app/log"
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    networks:
+      - dpr-app-net
+    restart: unless-stopped
+
+  postgres:
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:postgres-11'
+    hostname: postgres
+    container_name: postgres
+    environment:
+      - DB_USER={{ psql_db_user }}
+      - DB_PASS={{ psql_db_pass }}
+      - DB_NAME={{ psql_db_name }}
+      - PG_PASSWORD={{ psql_pg_pass }}
+      - DB_EXTENSION={{ psql_db_extension }}
+    command:
+{% if inventory_hostname in groups['bos_db'] %}
+      - "-c search_path=ufos"
+{% endif %}
+      - "-c log_line_prefix='%m[%p]%q%u@%d%h"
+      - "-c log_filename=postgres_log_%a.log"
+      - "-c logging_collector=on"
+      - "-c log_rotation_age=1d"
+      - "-c log_rotation_size=10MB"
+      - "-c log_truncate_on_rotation=on"
+      - "-c log_timezone=Europe/Moscow"
+      - "-c log_connections=on"
+      - "-c log_disconnections=on"
+      - "-c log_statement=all"
+      - "-c log_min_messages=warning"
+      - "-c client_min_messages=notice"
+      - "-c log_min_error_statement=error"
+      - "-c log_min_duration_statement=5000"
+      - "-c hba_file=/opt/pg_hba.conf"
+      - "-c listen_addresses=*"
+      - "-c port=5432"
+      - "-c max_connections=500"
+      - "-c superuser_reserved_connections=3"
+      - "-c shared_buffers=2048MB"
+      - "-c work_mem=32MB"
+      - "-c maintenance_work_mem=320MB"
+      - "-c huge_pages=off"
+      - "-c effective_cache_size=6GB"
+      - "-c effective_io_concurrency=0"
+      - "-c shared_preload_libraries=pg_stat_statements"
+      - "-c track_io_timing=on"
+      - "-c track_functions=pl"
+      - "-c wal_compression=on"
+      - "-c wal_buffers=-1"
+      - "-c wal_writer_delay=200ms"
+      - "-c wal_writer_flush_after=1MB"
+      - "-c bgwriter_delay=200ms"
+      - "-c bgwriter_lru_maxpages=100"
+      - "-c bgwriter_lru_multiplier=2.0"
+      - "-c bgwriter_flush_after=0"
+      - "-c max_worker_processes=2"
+      - "-c max_parallel_workers_per_gather=1"
+      - "-c max_parallel_maintenance_workers=1"
+      - "-c max_parallel_workers=2"
+      - "-c parallel_leader_participation=on"
+      - "-c enable_partitionwise_join=on"
+      - "-c enable_partitionwise_aggregate=on"
+    volumes:
+      - '{{ app_dir }}/postgres/data:/var/lib/postgresql:rw'
+      - '{{ app_dir }}/postgres/configs/pg_hba.conf:/opt/pg_hba.conf:rw'
+      - '{{ app_dir }}/postgres/logs:/var/log/postgresql:rw'
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    dns_search:
+      - otr.ru
+    networks:
+      dpr-app-net:
+        ipv4_address: "{{ psql_ip }}"
+    restart: unless-stopped
+
+  # https://github.com/edoburu/docker-pgbouncer 
+  # https://github.com/edoburu/docker-pgbouncer/blob/master/examples/generate-userlist 
+  # https://github.com/edoburu/docker-pgbouncer/blob/master/entrypoint.sh
+  pgbouncer: 
+    container_name: pgbouncer
+    hostname: pgbouncer
+    image: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images:pgbouncer-kotaimen
+    volumes:
+      - {{ app_dir }}/postgres/configs/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - {{ app_dir }}/postgres/configs/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+      - {{ app_dir }}/postgres/pgbouncer_connection.log:/etc/pgbouncer/connection.log
+    ports:
+      - 5432:5432
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+      - 172.31.197.248
+      - 172.31.197.212
+    networks:
+      - dpr-app-net
+    restart: unless-stopped
+volumes:
+  postgres:
+  pgadmin:
+
+networks:
+    dpr-app-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.20.10.0/24
+              gateway: 10.20.10.1

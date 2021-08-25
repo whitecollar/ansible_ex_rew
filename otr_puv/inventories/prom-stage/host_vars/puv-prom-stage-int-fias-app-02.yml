@@ -1,0 +1,11 @@
+---
+
+artifacts_name: fias
+elastic_host: puv-prom-stage-int-fias-es-02.otr.ru 
+elastic_port: 9200
+
+env_port: "8080"
+psql_name: "puv-prom-stage-int-fias-db"
+psql_db_user: "fias"
+psql_db_name: "fias"
+psql_db_pass: "fias"

@@ -1,0 +1,105 @@
+---
+
+# Убиваем старую джобу
+# Если старую джобу кильнуть не удалось, её нет, как при первом запуске, игнорим ошибки
+- name: Update Spark | Kill old job
+  shell: "./kill-job.sh output-1.txt"
+  args:
+    chdir: "{{ app_dir }}/scripts/"
+  ignore_errors: yes
+  tags:
+    - spark-1
+
+# Убиваем старую джобу
+# Если старую джобу кильнуть не удалось, её нет, как при первом запуске, игнорим ошибки
+- name: Update Spark | Kill old job
+  shell: "./kill-job.sh output-2.txt"
+  args:
+    chdir: "{{ app_dir }}/scripts/"
+  ignore_errors: yes
+  tags:
+    - spark-2
+
+# Ищем старые файлы
+- name: Update Spark | Find old file .jar
+  find:
+    paths: "{{ app_dir }}/spark_data/"
+    patterns: "^int-eld-spark-*"
+    file_type: "file"
+    recurse: yes
+    use_regex: yes
+  register: artifact_name_old
+  tags:
+    - spark-1
+
+# Ищем старые файлы
+- name: Update Spark | Find old file .jar
+  find:
+    paths: "{{ app_dir }}/spark_data/"
+    patterns: "^int-eld-spark-*" # Заменить на начало имени нового артефакта
+    use_regex: yes
+    recurse: yes
+  register: artifact_name_old
+  tags:
+    - spark-2
+
+# Удаляем старые файлы
+- name: Update Spark | Remove old files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: 
+    - "{{ artifact_name_old.files }}"
+  tags:
+    - spark-1
+    - spark-2
+
+# Копируем новые файлы
+- name: Update Spark | Copy new files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/spark_data"
+  with_fileglob:
+    - "{{ path_to_artifacts }}/*"
+  tags:
+    - spark-1
+    - spark-2
+
+# Ищем имя оставшегося файла и регистрируем его
+- name: Update Spark | Find latest file .jar
+  find:
+    paths: "{{ app_dir }}/spark_data"
+    patterns: "^int-eld-spark-*"
+    file_type: "file"
+    use_regex: yes
+  register: artifact_name
+  tags:
+    - spark-1
+
+# Ищем имя оставшегося файла и регистрируем его
+- name: Update Spark | Find latest file .jar
+  find:
+    paths: "{{ app_dir }}/spark_data"
+    patterns: "^int-eld-spark-*" # Заменить регулярное выражение для второго артефакта
+    file_type: "file"
+    use_regex: yes
+  register: artifact_name
+  tags:
+    - spark-2
+
+# Запускаем новую джобу
+- name: Update Spark | Start new job
+  shell: "./start-job.sh spark-worker-1 /opt/spark/spark_data/{{ artifact_name.files[0].path | basename }} output-1.txt"
+  args:
+    chdir: "{{ app_dir }}/scripts/"
+  tags:
+    - spark-1
+
+# Запускаем новую джобу
+- name: Update Spark | Start new job
+  shell: "./start-job.sh spark-worker-2 /opt/spark/spark_data/{{ artifact_name.files[0].path | basename }} output-2.txt"
+  args:
+    chdir: "{{ app_dir }}/scripts/"
+  tags:
+    - spark-2
+

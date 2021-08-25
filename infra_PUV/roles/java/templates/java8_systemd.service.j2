@@ -1,0 +1,14 @@
+[Unit]
+Description={{ artifacts_name_2 }}
+
+[Service]
+EnvironmentFile=/etc/systemd/system/{{ artifacts_name_2 }}.env
+WorkingDirectory={{ ufos_app_dir }}
+ExecStart=/bin/bash {{ ufos_app_dir }}/sufd.sh
+User=root
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

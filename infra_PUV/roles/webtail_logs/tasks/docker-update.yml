@@ -1,0 +1,30 @@
+---
+
+# Останавливаем контейнер.
+- name: Docker Update | Stop a container
+  docker_container:
+    name: "{{ deploy_name_app }}"
+    image: "{{ deploy_registry_image_app }}:{{ deploy_branch_app }}"
+    state: stopped
+    timeout: 600
+  when: images_pull_result.changed
+  
+# Удаляем контейнер.
+- name: Docker Update | Delete a container
+  docker_container:
+    name: "{{ deploy_name_app }}"
+    image: "{{ deploy_registry_image_app }}:{{ deploy_branch_app }}"
+    state: absent
+    timeout: 600
+  when: images_pull_result.changed
+
+# Создаём контейнер заново.
+- name: Docker Update | Update a container
+  docker_container:
+    name: "{{ deploy_name_app }}"
+    image: "{{ deploy_registry_image_app }}:{{ deploy_branch_app }}"
+    ports: "{{ deploy_ports_app }}"
+    volumes: "{{ deploy_volumes_app }}"
+    restart_policy: always
+    state: started
+    timeout: 600

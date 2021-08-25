@@ -1,0 +1,62 @@
+---
+
+# Созадаём том для портейнера:
+- name: Portainer Install | Portainer volume create
+  docker_volume:
+    name: portainer_data
+
+# Копируем файл с паролем портейнера
+- name: Portainer Install | Copy pwd file
+  copy:
+    src: "portainer_password"
+    dest: "{{ config_dir }}/app"
+    force: true
+
+# Логинимся на наш реджистри
+- name: Portainer Install | Log into private registry and force re-authorization
+  docker_login:
+    registry: "{{ deploy_registry_url }}"
+    username: "{{ deploy_registry_user }}"
+    password: "{{ deploy_registry_pass }}"
+    reauthorize: true
+  no_log: false
+  changed_when: false
+
+# # #
+# # Для удаления портенера
+# # Удаляем контейнер.
+# - name: Portainer Install | Delete a container
+#   docker_container:
+#     name: "portainer"
+#     image: portainer/portainer
+#     state: absent
+#   ignore_errors: yes
+#   register: portainer_deleted
+
+# # Удаляем файл и папку, если они есть
+# - name: Portainer Install | Copy pwd file
+#   file:
+#     path: "/tmp/portainer_password"
+#     state: absent
+#   when: portainer_deleted.changed
+#   ignore_errors: yes
+# # # 
+
+# Запускаем портейнер:
+- name: Portainer Install | Update a container
+  docker_container:
+    name: portainer
+    image: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images:portainer
+    ports: 
+      - 28000:8000
+      - 19000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ config_dir }}/app/portainer_password:{{ config_dir }}/app/portainer_password"
+      - portainer_data:/data
+    restart_policy: always
+    command: "--admin-password-file {{ config_dir }}/app/portainer_password"
+    comparisons:
+      image: ignore
+  register: portainer_install
+

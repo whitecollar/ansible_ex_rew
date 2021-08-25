@@ -1,0 +1,12 @@
+---
+
+artifacts_name: eld-fin
+
+env_port: "8080"
+psql_name: "puv-prom-stage-int-eld-gp-master"
+psql_db_user: "eldfin_test"
+psql_db_name: "eldfin_test"
+psql_db_pass: "Oracle33"
+psql_db_user_fw: "eldfin_test"
+psql_db_name_fw: "eldfin_test"
+psql_db_pass_fw: "Oracle33"

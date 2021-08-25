@@ -1,0 +1,13 @@
+---
+
+# Ожидаем запуска сервиса
+- name: Download Fias | Wait for start app
+  wait_for:
+    timeout: 60
+  when: create_fias_dir.changed
+
+# Запускаем ипорт в базу
+- name: Download Fias | Import on postrgres
+  uri:
+    url: "http://{{ inventory_hostname }}:8080/v1/import/start"
+    method: POST

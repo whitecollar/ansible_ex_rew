@@ -1,0 +1,51 @@
+do 
+$$
+declare 
+  i record;
+  sql_scr text;
+begin
+
+--права на схемы
+  sql_scr := '';
+    select 'GRANT USAGE ON SCHEMA '||string_agg(nspname,',')||' TO "user_name"' 
+    into sql_scr
+    from pg_namespace 
+    where nspname NOT like 'pg_%' and nspname != 'information_schema';
+  execute sql_scr;
+
+--права на таблицы
+  sql_scr := '';
+  
+    select 'GRANT SELECT_tables ON ALL TABLES IN SCHEMA '||string_agg(nspname,',')||' TO "user_name"' 
+    into sql_scr
+    from pg_namespace 
+    where nspname NOT like 'pg_%' and nspname != 'information_schema';
+  execute sql_scr;
+
+--права на последовательности
+  sql_scr := '';
+    select 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA '||string_agg(nspname,',')||' TO "user_name"' 
+    into sql_scr
+    from pg_namespace 
+    where nspname NOT like 'pg_%' and nspname != 'information_schema';
+  execute sql_scr;
+
+--права на функции/процедуры
+  sql_scr := '';
+    select 'GRANT EXECUTE ON ALL ROUTINES IN SCHEMA '||string_agg(nspname,',')||' TO "user_name"' 
+    into sql_scr
+    from pg_namespace 
+    where nspname NOT like 'pg_%' and nspname != 'information_schema';
+  execute sql_scr;
+  
+end;
+$$;
+
+
+ALTER DEFAULT PRIVILEGES GRANT USAGE ON SCHEMAS TO "user_name";      --использование всех схем
+
+ALTER DEFAULT PRIVILEGES GRANT SELECT_tables ON TABLES TO "user_name";
+
+ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON ROUTINES TO "user_name";   --запуск всех функций/процедур во всех схемах
+
+ALTER DEFAULT PRIVILEGES GRANT USAGE ON SEQUENCES TO "user_name";    --использование последовательностей (только для пользюков с правом записи)

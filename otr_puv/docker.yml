@@ -1,0 +1,8 @@
+---
+
+#  - hosts: all:!(название группы) - для исключения групп хостов 
+# - hosts: app:swagger:fias
+- hosts: all
+  become: true
+  roles:
+    - docker

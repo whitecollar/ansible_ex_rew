@@ -1,0 +1,25 @@
+---
+
+# Устанавливаем PostgreSQL 11
+- name: Install | Install Postgres 11
+  yum:
+    name: postgresql11-server
+    state: installed
+    update_cache: true
+
+# Создаем рабочую директорию по умолчанию
+- name: Install | Сreate directory {{ app_dir }}/postgres
+  file:
+    path: "{{ app_dir }}/postgres"
+    owner: "postgres"
+    group: "postgres"
+    state: directory
+
+# Убедаемся что каталог существует
+- name: Install | Ensure PostgreSQL data directory exists.
+  file:
+    path: "{{ app_dir }}/postgres"
+    owner: "postgres"
+    group: "postgres"
+    state: directory
+    mode: 0700

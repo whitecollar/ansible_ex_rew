@@ -1,0 +1,15 @@
+---
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/personals
+deploy_name: personals-backend
+deploy_ports:
+  - 8080:8080
+
+env_port: "8080"
+
+deploy_registry_image_2: registry-dpr-gitlab.otr.ru:5005/puv/int-eld-fin
+deploy_name_2: int-eld-fin-backend
+deploy_ports_2:
+  - 9080:8080
+
+env_port_2: "9080"
+

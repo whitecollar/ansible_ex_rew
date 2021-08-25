@@ -1,0 +1,58 @@
+---
+
+# Переменная дл директории скриптов
+scripts_dir: "{{ app_dir }}/scripts"
+
+
+# Переменные сети
+subnet: 10.50.10.0/24
+gateway: 10.50.10.1
+
+# Общие переменные
+dns:
+  {
+    "172.31.2.113",
+    "172.31.4.4",
+    "172.31.198.254",
+    "172.31.197.248",
+    "172.31.197.212"
+  }
+dns_search:
+  {
+    "otr.ru",
+    "pds.otr.ru"
+  }
+master_url: "spark://{{ master_name }}:7077"
+spark_image: "registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images:spark-3.0.1"
+
+
+# Переменные для мастера
+master_name: spark-master
+master_ip_address: 10.50.10.10
+master_webui_port: 8880
+master_ports:
+  {
+    "8880:8880",
+    "8081:8081",
+    "7077:7077"
+  }
+master_volumes:
+  {
+    "./spark_data:/opt/spark/spark_data:rw",
+    "./spark_tmp:/tmp/int_eld_spark/checkpoints:rw"
+  }
+  
+# Переменные для воркера 1
+worker_1_name: spark-worker-1
+worker_1_ip_address: 10.50.10.11
+worker_1_webui_port: 8881
+worker_1_ports:
+  {
+    "8881:8881",
+    "4040:4040"
+  }
+worker_1_volumes:
+  {
+    "./spark_data:/opt/spark/spark_data:rw",
+    "./spark_tmp:/tmp/int_eld_spark/checkpoints:rw"
+  }

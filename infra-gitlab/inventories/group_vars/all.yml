@@ -1,0 +1,6 @@
+---
+
+# Место хранения данных:
+db_directory: /opt
+
+ansible_debug: true

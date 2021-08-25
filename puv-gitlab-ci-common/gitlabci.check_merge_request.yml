@@ -1,0 +1,21 @@
+stages:
+  - checkmr
+
+disablemr:
+ tags:
+    - projects_puv
+ stage: checkmr
+ rules:
+   #Проверяем merge-request на соотсветствие правилам. Если соответсвует - запускаем команду изменения статуса MR на "Закрыт"
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /release|hotfix|feature|master/ && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /develop/'
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME != /release|hotfix/ && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /master/'
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME != /bugfix|develop/ && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /release/'
+      when: always
+    - when: never
+ before_script:
+  - apk add curl
+ script:
+  - |
+    echo "https://dpr-gitlab.otr.ru/api/v4/project/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID"
+  - |
+    curl --request PUT --header "PRIVATE-TOKEN: $GITLAB_TOKEN_FOR_CI" --form "state_event=close" "https://dpr-gitlab.otr.ru/api/v4/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID"

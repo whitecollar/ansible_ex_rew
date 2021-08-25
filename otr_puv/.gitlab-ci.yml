@@ -1,0 +1,107 @@
+stages:
+  - ansible-single-role
+  - ansible-provision
+
+ansible-single-role:
+  stage: ansible-single-role
+  tags:
+    - infra_puv
+  before_script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+  # Запускаем ssh-agent
+    - eval $(ssh-agent -s)
+  # Создаём директорию для закрытого ключа
+    - mkdir -p ~/.ssh
+  # Выставляем права доступа для директории
+    - chmod 700 ~/.ssh
+  # Копируем закрытый ключ
+    - cp $SSH_PRIVATE_KEY ~/.ssh/id_rsa
+  # Выставляем права закрытому ключу
+    - chmod 600 ~/.ssh/id_rsa
+  # Передаём ключ ssh-aget'у
+    - ssh-add ~/.ssh/id_rsa
+  script:
+    - ansible-playbook -i inventories/single_role/hosts gitlab_runner.yml
+  when: manual
+
+ansible-provision-dev:
+  stage: ansible-provision
+  tags:
+    - infra_puv
+  only:
+    - master
+  except:
+    refs:
+      - triggers
+  before_script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+  # Запускаем ssh-agent
+    - eval $(ssh-agent -s)
+  # Создаём директорию для закрытого ключа
+    - mkdir -p ~/.ssh
+  # Выставляем права доступа для директории
+    - chmod 700 ~/.ssh
+  # Копируем закрытый ключ
+    - cp $SSH_PRIVATE_KEY ~/.ssh/id_rsa
+  # Выставляем права закрытому ключу
+    - chmod 600 ~/.ssh/id_rsa
+  # Передаём ключ ssh-aget'у
+    - ssh-add ~/.ssh/id_rsa
+  script:
+    - ansible-playbook -i inventories/dev/hosts provision.yml
+  when: manual
+
+ansible-provision-testing:
+  stage: ansible-provision
+  tags:
+    - infra_puv
+  only:
+    - master
+  except:
+    refs:
+      - triggers
+  before_script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+  # Запускаем ssh-agent
+    - eval $(ssh-agent -s)
+  # Создаём директорию для закрытого ключа
+    - mkdir -p ~/.ssh
+  # Выставляем права доступа для директории
+    - chmod 700 ~/.ssh
+  # Копируем закрытый ключ
+    - cp $SSH_PRIVATE_KEY ~/.ssh/id_rsa
+  # Выставляем права закрытому ключу
+    - chmod 600 ~/.ssh/id_rsa
+  # Передаём ключ ssh-aget'у
+    - ssh-add ~/.ssh/id_rsa
+  script:
+    - ansible-playbook -i inventories/testing/hosts provision.yml
+  when: manual
+
+ansible-provision-testing2:
+  stage: ansible-provision
+  tags:
+    - infra_puv
+  only:
+    - master
+  except:
+    refs:
+      - triggers
+  before_script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+  # Запускаем ssh-agent
+    - eval $(ssh-agent -s)
+  # Создаём директорию для закрытого ключа
+    - mkdir -p ~/.ssh
+  # Выставляем права доступа для директории
+    - chmod 700 ~/.ssh
+  # Копируем закрытый ключ
+    - cp $SSH_PRIVATE_KEY ~/.ssh/id_rsa
+  # Выставляем права закрытому ключу
+    - chmod 600 ~/.ssh/id_rsa
+  # Передаём ключ ssh-aget'у
+    - ssh-add ~/.ssh/id_rsa
+  script:
+    - ansible-playbook -i inventories/testing2/hosts provision.yml
+  when: manual
+  

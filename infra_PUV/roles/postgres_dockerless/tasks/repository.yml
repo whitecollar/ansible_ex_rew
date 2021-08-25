@@ -1,0 +1,13 @@
+---
+
+# Копируем репозиторий PostgreSQL 11 Pro
+- name: Repository | Import Repo Postgres-11
+  copy:
+    src: "pgdg-redhat-all.repo"
+    dest: "/etc/yum.repos.d/pgdg-redhat-all.repo"
+
+# Копируем ключи репозитория PostgreSQL 11 Pro
+- name: Repository | Add Repo Key Postgres-11
+  copy:
+    src: "RPM-GPG-KEY-PGDG"
+    dest: "/etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG"

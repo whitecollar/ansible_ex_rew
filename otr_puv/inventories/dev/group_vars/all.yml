@@ -1,0 +1,110 @@
+---
+
+# Место хранения данных:
+config_dir: /opt
+app_dir: "{{ config_dir }}/app"
+
+# Переменная текущего окружения
+var_env: dev  
+
+# Порты окружения для docker контейнеров
+env_port: "18080"
+env_port_2: "18081"
+env_port_3: "18083"
+
+# Переменные роли consul
+consul_host: "puv-{{ var_env }}-int-consul.otr.ru"
+consul_port: "8500"
+
+ip_db_env: "host	all		all		172.31.195.0/24		md5"
+ip_env: 172.31.195.0
+
+ansible_debug: true
+ssh_pty: true
+
+# Переменные роли postgres
+psql_name: "postgres"
+psql_ip: "10.20.10.111"
+psql_port: "5432"
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+psql_pg_pass: "Oracle13"
+psql_db_extension: "dblink"
+
+# Переменные роли deploy
+
+deploy_branch: 
+deploy_branch_2:
+deploy_branch_3:
+deploy_ports:
+deploy_exposed_ports:
+deploy_exposed_ports_2:
+deploy_exposed_ports_3:
+deploy_volumes:
+deploy_volumes_2:
+deploy_volumes_3:
+
+deploy_registry_url: registry-dpr-gitlab.otr.ru:5005
+deploy_registry_user: ansible_ci_cd_user
+deploy_registry_pass: mDIOVGJSDGVyyd7yv7dsfdyv
+
+aggredator_registry_url: docker.rnds.pro
+aggredator_registry_user: otr
+aggredator_registry_pass: 3shJAgEg9ZBL59G7V3V3E
+
+ansible_user: ansible_puv_user
+
+# Переменные роли kafka
+kafka_server: "puv-{{ var_env }}-int-kafka.otr.ru"
+int_kafka: "puv-{{ var_env }}-int-kafka.otr.ru:9092"
+ext_kafka: "puv-{{ var_env }}-ext-integr.otr.ru:9092"
+
+kafka_port: 9092
+accrual_kafka_topic: accrual
+kafka_topic: dict-update
+
+# Переменная содержит базу, к которой подключается приложение
+app_db:
+eld_url:
+
+# Переменная для подключения к базе УФОСа
+db_ufos_host_prop:
+
+# Реквизиты для авторизации УФОС
+ufos_login: ic
+ufos_password: l12345
+ufos_reg: "http://puv-{{ var_env }}-int-reg-app-01:18081"
+ufos_assign: "http://puv-{{ var_env }}-int-assign-app-01:18081"
+ufos_nsi: "http://puv-{{ var_env }}-int-nsi-app:18081"
+constructor_url: "puv-{{ var_env }}-int-constructor"
+
+# Переменные используемые NiFi
+nifi_fias_url: "http://puv-{{ var_env }}-int-fias-app.otr.ru:8080"
+nifi_nsi_url: "http://puv-{{ var_env }}-int-nsi-app.otr.ru:18080"
+nifi_constructor_url: "http://puv-{{ var_env }}-int-constructor.otr.ru:18080"
+nifi_agredator_url: "http://puv-{{ var_env }}-int-agredator.otr.ru:8090"
+nifi_minio_url: "http://puv-{{ var_env }}-int-s3-server.otr.ru:8080"
+
+# Переменные роли Redis
+redis_host: "puv-{{ var_env }}-int-spark.otr.ru"
+redis_port: 6379
+redis_login: redis
+redis_password: CDD2RbuYAqxfKMnV28WNtqE7
+redis_topic: default
+
+# Переменные для настройки PgBouncer
+admin_users: "postgres"
+pool_mode: "session"
+max_client_conn: "750"
+default_pool_size: "500"
+max_db_connections: "300"
+max_user_connections: "150"
+pool_size: "750"
+reserve_pool: "150"
+
+proxy_conf_repo: puv-proxy
+
+s3_host_puv: http://puv-{{ var_env }}-int-s3-server.otr.ru:9000
+s3_bucket_puv: puv-admins
+s3_access_key_puv: sHVZvzjuSmNVwgGu
+s3_secret_key_puv: HRvZW4BLHmQTmfwP

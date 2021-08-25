@@ -1,0 +1,11 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/auth-admin
+deploy_name: auth-admin-backend
+deploy_ports:
+  - 8080:8080
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/logs"
+
+env_port: "8080"
+

@@ -1,0 +1,14 @@
+---
+
+# Попробовать изменить использование паролей, например через обращение к файлу.
+# Получение хэша
+- name: Portainer Configure | Get cache
+  shell: 'curl -X POST "http://{{ inventory_hostname }}:19000/api/auth" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"Username\": \"admin\", \"Password\": \"Oracle33\"}" | cut -f 4 -d "\""'
+  register: portainer_cache
+  ignore_errors: yes
+
+# Создание нового пользователя
+- name: Portainer Configure | Create User
+  shell: 'curl -X POST "http://{{ inventory_hostname }}:19000/api/users" -H "accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer {{ portainer_cache.stdout }}" -d "{ \"Username\": \"User\", \"Password\": \"nD4cAg7p\", \"Role\": 1}"'
+  ignore_errors: yes 
+  

@@ -1,0 +1,35 @@
+
+# Создаём рабочую директорию spark_docker на master
+- name: Configure | Create work dir 
+  file:
+    state: directory
+    path: "{{ app_dir }}"
+    owner: root
+    group: root
+
+# Создаём директорию для скриптов
+- name: Configure | Create scripts dir 
+  file:
+    state: directory
+    path: "{{ scripts_dir }}"
+    owner: root
+    group: root
+
+# Копируем шаблоны в директорию приложения
+- name: Configure | Copy templates app
+  template:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/{{ item | basename | regex_replace('.j2', '') }}"
+    force: true
+  with_fileglob:
+    - ../templates/*.j2
+
+# Копируем шаблоны скрипто в соответствующую директорию
+- name: Configure | Copy templates scripts
+  template:
+    src: "{{ item }}"
+    dest: "{{ scripts_dir }}/{{ item | basename | regex_replace('.j2', '') }}"
+    force: true
+    mode: "u=rwx,g=rx,o=rx"
+  with_fileglob:
+    - ../templates/scripts/*.j2

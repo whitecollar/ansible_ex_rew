@@ -1,0 +1,102 @@
+---
+
+# Останавливаем контейнер 1
+- name: Docker Update | Stop a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    image: "{{ deploy_registry_image }}:{{ deploy_branch }}"
+    state: stopped
+    timeout: 600
+  when: images_pull_result.changed
+  ignore_errors: yes  
+  
+# Удаляем контейнер 1
+- name: Docker Update | Delete a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    image: "{{ deploy_registry_image }}:{{ deploy_branch }}"
+    state: absent
+    timeout: 600
+  when: images_pull_result.changed
+  ignore_errors: yes  
+
+# Создаём контейнер заново 1
+- name: Docker Update | Update a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    image: "{{ deploy_registry_image }}:{{ deploy_branch }}"
+    ports: "{{ deploy_ports }}"
+    exposed_ports: "{{ deploy_exposed_ports }}"
+    volumes: "{{ deploy_volumes }}"
+    env_file: "{{ app_dir }}/.env"
+    restart_policy: always
+    state: started
+    timeout: 600
+
+# Останавливаем контейнер 2
+- name: Docker Update | Stop a container 2
+  docker_container:
+    name: "{{ deploy_name_2 }}"
+    image: "{{ deploy_registry_image_2 }}:{{ deploy_branch_2 }}"
+    state: stopped
+    timeout: 600
+  when: inventory_hostname in groups['app_two'] and images_pull_result_2.changed
+  ignore_errors: yes  
+
+# Удаляем контейнер 2
+- name: Docker Update | Delete a container 2
+  docker_container:
+    name: "{{ deploy_name_2 }}"
+    image: "{{ deploy_registry_image_2 }}:{{ deploy_branch_2 }}"
+    state: absent
+    timeout: 600
+  when: inventory_hostname in groups['app_two'] and images_pull_result_2.changed
+  ignore_errors: yes  
+
+# Создаём контейнер заново 2 
+- name: Docker Update | Update a container 2
+  docker_container:
+    name: "{{ deploy_name_2 }}"
+    image: "{{ deploy_registry_image_2 }}:{{ deploy_branch_2 }}"
+    ports: "{{ deploy_ports_2 }}"
+    exposed_ports: "{{ deploy_exposed_ports_2 }}"
+    volumes: "{{ deploy_volumes_2 }}"
+    env_file: "{{ app_dir }}/.env2"
+    restart_policy: always
+    state: started
+    timeout: 600
+  when: inventory_hostname in groups['app_two']
+
+# Останавливаем контейнер 3
+- name: Docker Update | Stop a container 3
+  docker_container:
+    name: "{{ deploy_name_3 }}"
+    image: "{{ deploy_registry_image_3 }}:{{ deploy_branch_3 }}"
+    state: stopped
+    timeout: 600
+  when: inventory_hostname in groups['app_three'] and images_pull_result_3.changed
+  ignore_errors: yes  
+
+# Удаляем контейнер 3
+- name: Docker Update | Delete a container 3
+  docker_container:
+    name: "{{ deploy_name_3 }}"
+    image: "{{ deploy_registry_image_3 }}:{{ deploy_branch_3 }}"
+    state: absent
+    timeout: 600
+  when: inventory_hostname in groups['app_three'] and images_pull_result_3.changed
+  ignore_errors: yes  
+
+# Создаём контейнер 3 заново
+- name: Docker Update | Update a container 3
+  docker_container:
+    name: "{{ deploy_name_3 }}"
+    image: "{{ deploy_registry_image_3 }}:{{ deploy_branch_3 }}"
+    ports: "{{ deploy_ports_3 }}"
+    exposed_ports: "{{ deploy_exposed_ports_3 }}"
+    volumes: "{{ deploy_volumes_3 }}"
+    env_file: "{{ app_dir }}/.env3"
+    restart_policy: always
+    state: started
+    timeout: 600
+  when: inventory_hostname in groups['app_three']

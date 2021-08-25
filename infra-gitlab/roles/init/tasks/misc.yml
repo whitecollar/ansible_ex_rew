@@ -1,0 +1,19 @@
+---
+
+# Отключаем firewalld для корректной работы
+- name: Misc | Disable firewalld
+  systemd:
+    state: stopped
+    enabled: false
+    name: firewalld
+
+# Отключаем SELinux для корректной работы
+- name: Misc | Disable SELinux
+  selinux:
+    state: disabled
+
+# Чтобы изменения применились перезагружаем хост
+- name: Misc | Reboot
+  reboot:
+    reboot_timeout: 300
+    

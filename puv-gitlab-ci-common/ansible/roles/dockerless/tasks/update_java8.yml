@@ -1,0 +1,43 @@
+---
+
+# Останавливаем сервис
+- name: Update Java 8 | Stop java 8 unit 
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: stopped
+
+# Архивируем артефакты
+- archive:
+    path: "{{ path_to_artifacts }}"
+    dest: "/artifacts.tgz"
+  delegate_to: localhost
+
+# Копируем архив артефактов
+- name: Update Java 8 | Copy new artifact
+  copy:
+    src: "/artifacts.tgz"
+    dest: "{{ app_dir }}"
+    force: true
+
+# Разархивируем артефакты
+- name: Update Java 8 | Unarchived 
+  unarchive:
+    src: "{{ app_dir }}/artifacts.tgz"
+    dest: "{{ app_dir }}/docker/source/"
+    remote_src: yes
+
+# Меняем порт для приложения
+- name: Update Java 8 | Edited config
+  lineinfile:
+    path: "{{ app_dir }}/docker/source/sufd/jetty/etc/jetty.properties"
+    state: present
+    regexp: '^sufd\.bind\.port'
+    line: sufd.bind.port=18081
+
+# Запускаем сервис
+- name: Update Java 8 | Start java 8 unit 
+  systemd:
+    name: "{{ service_name}}"
+    enabled: yes
+    state: started

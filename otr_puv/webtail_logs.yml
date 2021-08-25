@@ -1,0 +1,6 @@
+---
+
+- hosts: app:compose_app
+  become: true
+  roles:
+    - webtail_logs

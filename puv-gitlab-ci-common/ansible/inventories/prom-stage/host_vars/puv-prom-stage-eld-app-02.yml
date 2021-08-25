@@ -1,0 +1,5 @@
+---
+
+artifacts_name: personals
+
+env_port: "8080"

@@ -1,0 +1,25 @@
+---
+
+# Устанавливаем пакеты epel
+- name: Software | Install epel pkgs
+  yum:
+    name: "epel-release"
+    state: latest
+    update_cache: true
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version != "8"
+
+# Устанавливаем необходимые пакеты
+- name: Software | Install base pkgs
+  yum:
+    name: "{{ base_pkgs }}"
+    state: latest
+    update_cache: true
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version != "8"
+
+# Устанавливаем необходимые пакеты
+- name: Software | Install base pkgs
+  yum:
+    name: "{{ base_pkgs_8 }}"
+    state: latest
+    update_cache: true
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"

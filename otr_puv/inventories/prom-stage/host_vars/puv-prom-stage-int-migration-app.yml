@@ -1,0 +1,8 @@
+---
+
+artifacts_name: migration
+
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+psql_db_name: "migration"
+psql_pg_pass: "Oracle13"

@@ -1,0 +1,6 @@
+---
+
+artifacts_name: fias
+
+env_port: "8080"
+

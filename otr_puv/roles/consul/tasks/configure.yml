@@ -1,0 +1,16 @@
+---
+# Создаём рабочую директорию Consul
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ app_dir }}"
+    owner: root
+    group: root
+
+#  Копируем файл docker-compose.yml
+- name: Configure | Configure docker-compose.yml file
+  copy:
+    src: "docker-compose.yml"
+    dest: "{{ app_dir }}"
+    owner: root
+    group: root

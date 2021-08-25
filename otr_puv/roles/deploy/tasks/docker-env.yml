@@ -1,0 +1,21 @@
+---
+
+# Создаём файл с переменными
+- name: Docker Env | Configure env file
+  template:
+    src: "environment.j2"
+    dest: "{{ app_dir }}/.env"
+
+# Создаём файл с переменными
+- name: Docker Env | Configure env file 2
+  template:
+    src: "environment2.j2"
+    dest: "{{ app_dir }}/.env2"
+  when: inventory_hostname in groups['app_two']
+
+# Создаём файл с переменными
+- name: Docker Env | Configure env file 3
+  template:
+    src: "environment3.j2"
+    dest: "{{ app_dir }}/.env3"
+  when: inventory_hostname in groups['app_three']

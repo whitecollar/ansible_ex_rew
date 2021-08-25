@@ -1,0 +1,10 @@
+---
+
+artifacts_name: payment
+
+env_port: 18080
+
+app_db: jdbc:postgresql://puv-prom-stage-int-payment-db:5432/payment
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+eld_url: http://puv-prom-stage-eld-app-01.otr.ru:8080

@@ -1,0 +1,16 @@
+---
+
+artifacts_name: auth-admin
+
+env_port: 8080
+
+spring_datasource_password: Oracle33
+spring_datasource_url: jdbc:postgresql://localhost:5432/auth_admin
+spring_datasource_username: puv
+
+psql_name: "localhost"
+psql_db_user: "puv"
+psql_db_name: "auth_admin"
+psql_db_pass: "Oracle33"
+
+constructor_url: http://puv-{{ var_env }}-int-constructor-01.otr.ru:18080

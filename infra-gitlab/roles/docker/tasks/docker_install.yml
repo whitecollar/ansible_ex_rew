@@ -1,0 +1,31 @@
+---
+
+### rhel-7-server-extras-rpms необходим для установки пакета container-selinux для установки docker ###
+# Устанавливаем докер
+- name: Docker Install | Install docker pkgs
+  yum:
+    name: "{{ docker_pkgs }}"
+    state: installed
+    update_cache: true
+
+# Создаём директорию для файла сервиса
+- name: Docker Install | Directory create
+  file:
+    state: directory
+    path: "/etc/systemd/system/docker.service.d/"
+
+# Копируем файл сервиса 
+- name: Docker Install | Service copy
+  copy:
+    src: docker.service
+    dest: "/etc/systemd/system/docker.service.d/docker.service"
+    force: true
+
+# Копируем конфигурационный файл docker
+# Необходимо, дабы не пересекалась рабочая сеть хостов с сетью docker’а.
+- name: Docker Install | Copy config file
+  copy:
+    src: "daemon.json"
+    dest: "/etc/docker/daemon.json"
+
+

@@ -1,0 +1,22 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/auth-admin
+deploy_name: auth-admin-backend
+deploy_ports:
+  - 8080:8080
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/logs"
+
+env_port: "8080"
+
+
+spring_datasource_password: Oracle33
+spring_datasource_url: jdbc:postgresql://postgres:5432/auth_admin
+spring_datasource_username: puv
+
+psql_name: "postgres"
+psql_db_user: "puv"
+psql_db_name: "auth_admin"
+psql_db_pass: "Oracle33"
+
+constructor_url: http://puv-{{ var_env }}-int-constructor.otr.ru:18080

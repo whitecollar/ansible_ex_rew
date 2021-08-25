@@ -1,0 +1,8 @@
+---
+#  Запуск сервисов через docker-compose #
+- name: Docker compose up | Docker compose up
+  docker_compose:
+    project_src: "{{ app_dir }}/postgres"
+    state: present
+    pull: yes
+  register: docker_compose_up

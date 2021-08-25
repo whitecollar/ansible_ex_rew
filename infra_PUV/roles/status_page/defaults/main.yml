@@ -1,0 +1,9 @@
+---
+
+deploy_registry_image_app: registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images
+deploy_branch_app: status-page
+deploy_name_app: status_page
+deploy_ports_app:
+  - 80:80
+deploy_volumes_app:
+  - "{{ app_dir }}/lists/:/app/lists/"

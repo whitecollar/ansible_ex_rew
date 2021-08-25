@@ -1,0 +1,38 @@
+---
+
+- name: Install Java 8 | Creates directory  
+  file:
+    path: "{{ java8_inst_dir }}"
+    state: directory
+    mode: '0755'
+  register: create_work_dir
+
+# - name: Install Java 8 | Download files
+#   aws_s3:
+#     s3_url: "{{ s3_host_puv }}"
+#     bucket: "{{ s3_bucket_puv }}"
+#     object: "{{ java8_pkg_name }}"
+#     dest: "{{ java8_inst_dir }}"
+#     mode: get
+#     aws_access_key: "{{ s3_access_key_puv }}"
+#     aws_secret_key: "{{ s3_secret_key_puv }}"
+
+- name: Install Java 8 | Unarchived
+  unarchive:
+    src: "{{ config_dir }}/{{ java8_pkg_name }}"
+    dest: "{{ config_dir }}"
+    remote_src: yes
+  when: create_work_dir.changed
+
+- name: Install Java 8 | Delete archive
+  file: 
+    path: "{{ config_dir }}/{{ java8_pkg_name }}"
+    state: absent
+  when: create_work_dir.changed
+
+- name: Install Java 8 | Simlink
+  file:
+    src: "{{ java8_inst_dir }}/bin/java"
+    dest: "/usr/bin/java"
+    state: link
+  when: create_work_dir.changed

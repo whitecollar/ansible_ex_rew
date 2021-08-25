@@ -1,0 +1,108 @@
+[app]
+[app:children]
+app_elk
+app_one
+app_two
+app_three
+
+[compose_app]
+[compose_app:children]
+fias
+auth_admin
+proxy
+overpay
+s3_app
+
+[compose_app_two]
+[compose_app_two:children]
+personals
+
+[compose_app_three]
+[compose_app_three:children]
+constructor_test
+
+[app_elk]
+puv-test-int-elk-01
+
+[status_page]
+puv-test-int-elk-01
+
+[app_one]
+puv-test-int-constructor 
+puv-test-int-payment-app-01 config_dir="/egisso"
+puv-test-int-spark
+
+[app_two]
+puv-test-int-nsi-app config_dir="/egisso"
+puv-test-int-assign-app-01 config_dir="/egisso"
+puv-test-int-reg-app-01 config_dir="/egisso"
+
+[app_three]
+puv-test-int-assign-app-01 config_dir="/egisso"
+
+[apache_nifi]
+puv-test-int-integr 
+
+[auth_admin]
+puv-test-int-auth-admin
+
+[fias]
+puv-test-int-fias-app
+
+[redis]
+puv-test-int-spark
+
+[personals]
+puv-test-eld-app
+
+[s3_app]
+puv-test-int-s3-server
+
+[consul]
+puv-test-int-consul
+
+[proxy]
+puv-test-int-proxy-01 config_dir="/u01"
+
+[constructor_test]
+
+[overpay]
+puv-test-int-overpay-app-01
+
+[ufos]
+puv-test-int-nsi-app config_dir="/egisso"
+puv-test-int-assign-app-01 config_dir="/egisso"
+puv-test-int-reg-app-01 config_dir="/egisso"
+
+[apache_spark]
+puv-test-int-spark
+
+[postgres]
+puv-test-int-nsi-db config_dir="/egisso"
+puv-test-int-assign-db config_dir="/egisso"
+puv-test-int-reg-db config_dir="/egisso"
+puv-test-int-payment-db config_dir="/egisso"
+
+[postgres_ext]
+puv-test-ext-postgres
+
+[apache_kafka]
+puv-test-ext-kafka
+puv-test-int-kafka
+
+[bos_db]
+puv-test-int-nsi-db config_dir="/egisso"
+puv-test-int-assign-db config_dir="/egisso"
+puv-test-int-reg-db config_dir="/egisso"
+
+[arenadata_master]
+puv-test-int-eld-gp-master
+
+[arenadata_node]
+puv-test-int-eld-gp-segment-01
+puv-test-int-eld-gp-segment-02
+puv-test-int-eld-gp-segment-03
+puv-test-int-eld-gp-segment-04
+
+[agredator]
+puv-test-int-agredator

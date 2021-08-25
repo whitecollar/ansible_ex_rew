@@ -1,0 +1,34 @@
+---
+
+  - include: docker-images.yml
+    tags:
+      - first 
+      - thrid
+      - second
+      - ufos
+      - front
+      - proxy
+  # Если изображение обновилось, то выполняем обновление контейнера.
+  - include: docker-update-first.yml
+    tags:
+      - first
+      - front
+  - include: docker-update-second.yml
+    tags:
+      - second
+      - ufos
+  - include: docker-update-thrid.yml
+    tags:
+      - thrid
+  - include: docker-update-proxy.yml
+    tags:
+      - proxy
+  - include: update_spark.yml
+  - include: docker-prune.yml
+    tags:
+      - first 
+      - second
+      - ufos
+      - front
+      - proxy
+      - thrid

@@ -1,0 +1,198 @@
+stages:
+  - prebuild
+  - build-image
+
+.node-job:
+  image: $NODE_IMAGE
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+# Abstract stage job on projects_puv_front.
+.prebuild-job:
+  extends: .node-job
+  stage: prebuild
+  tags:
+    - projects_puv_front
+
+# Lint project source code.
+codestyle check:
+  extends: .prebuild-job
+  only:
+    - merge_requests
+  except:
+    refs:
+      - "tags"
+  cache:
+    key: $CI_COMMIT_REF_SLUG-eslint
+    paths:
+      - .eslintcache
+  before_script:
+    - npm ci
+  allow_failure: true
+  script:
+    - npm run lint
+
+# Find and list all TODO, FIXME, etc.
+check keywords:
+  stage: prebuild
+  only:
+    - merge_requests
+    - develop
+    - "/^release-\\w+/"
+    - master
+  except:
+    refs:
+      - "tags"
+  tags:
+    - projects_puv_front
+  image: $CHECODE_IMAGE
+  script: checode src/
+
+# Abstract Angular build job.
+# Accepts variable NG_CONFIG, where shoud be valid value from angular.json.
+.build-statics-tag:
+  extends: .prebuild-job
+  artifacts:
+    paths:
+      - ./dist
+  script:
+    - export DATE_RELEASE=`date +%d%m%y`
+    - apk add git
+    # Подключаемся к текущему репозиторию гитлаба 
+    - git remote set-url origin https://$GIT_USER:$GIT_PASS@$PROJECT_URL
+    # Задаём e-mail пользователя для дальнейших изменений
+    - git config --global user.email "$GIT_EMAIL_USER"
+    # Задаём имя пользователя для дальнейших изменений
+    - git config --global user.name "$GIT_USER"
+    - node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build -c=$NG_CONFIG
+    - npm run optimize-css
+    # Забираем последний тег, если он существует, если нет, приравниваем значение к 0
+    - if git describe --tags --abbrev=0 > /dev/null; then LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1)); else LAST_TAG=0.0.0; fi
+    # Выделяем номер последней сборки из тега и инкриментим
+    - BUILD_NUMBER=$(echo $LAST_TAG |  awk -F'.' '{print $3+1}')
+    # Формируем новую версию в формате <major>.<minor>.<номер сборки> TODO: добавить суффикс (dev, RC или "") в зависимости от ветки
+    - NEWVERSION=$MAJOR.$MINOR.$BUILD_NUMBER
+    # Заносим тег с суффиксом в файл для версий
+    - echo "${NEWVERSION}${SUFF}" > ./dist/version.txt
+    # Создаем тэг
+    - git tag -a $NEWVERSION.$DATE_RELEASE.$CI_PROJECT_NAME -m "version ${NEWVERSION}.${DATE_RELEASE}.${CI_PROJECT_NAME}"
+    # Пушим тэг в текущую ветку  
+    - git push origin $NEWVERSION.$DATE_RELEASE.$CI_PROJECT_NAME
+
+# Build dev static files.
+.build-statics:
+  extends: .prebuild-job
+  variables:
+    NG_CONFIG: dev-server
+  artifacts:
+    paths:
+      - ./dist
+  script:
+    - node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build -c=$NG_CONFIG
+    - npm run optimize-css
+
+# Build dev static files.
+build-statics:branch:
+  extends: .build-statics
+  only:
+    - merge_requests
+  except:
+    refs:
+      - "develop"
+      - "/^release-\\w+/"
+      - "master"
+      - "tags"
+  variables:
+    NG_CONFIG: dev-server
+  script:
+    - node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build -c=$NG_CONFIG
+    - npm run optimize-css
+
+# Build dev static files.
+build-statics:dev:
+  extends: .build-statics
+  only:
+    - "develop"
+  variables:
+    NG_CONFIG: dev-server
+
+# Build testing static files.
+build-statics:testing:
+  extends: .build-statics-tag
+  only:
+    - "/^release-\\w+/"
+  variables:
+    NG_CONFIG: testing-server
+    SUFF: "-rc"
+
+# Build testing static files.
+build-statics:prom-stage:
+  extends: .build-statics-tag
+  only:
+    - "master"
+  variables:
+    NG_CONFIG: prom-server
+    SUFF: ""
+
+# Abstract job for Docker image build and push.
+# Accepts NGINX_CONFIG variable, where shoud be file from `config/`
+# without `default_` prefix.
+.build-image:
+  stage: build-image
+  tags:
+    - projects_puv_front
+  script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u$CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker build --build-arg config_name=$NGINX_CONFIG --pull -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+# Build image for dev server.
+build-image:dev:
+  extends: .build-image
+  # FIXME: build image on tag when it becomes possible to deploy by tag
+  only:
+    - "develop"
+  needs:
+    - build-statics:dev
+  variables:
+    NGINX_CONFIG: dev
+
+# Build image for testing server.
+build-image:release:
+  extends: .build-image
+  only:
+    - "/^release-\\w+/"
+  needs:
+    - build-statics:testing
+  variables:
+    NGINX_CONFIG: testing
+
+# Build image for testing server.
+build-image:testing:
+  extends: .build-image
+  only:
+    - "/^release-\\w+/"
+  needs:
+    - build-statics:testing
+  variables:
+    NGINX_CONFIG: testing
+  script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u$CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker build --build-arg config_name=$NGINX_CONFIG --pull -t $CI_REGISTRY_IMAGE:testing .
+    - docker push $CI_REGISTRY_IMAGE:testing
+
+# Build testing static files.
+build-statics:prom-stage:
+  extends: .build-statics-tag
+  only:
+    - "master"
+  variables:
+    NG_CONFIG: prom-server
+    SUFF: ""
+    

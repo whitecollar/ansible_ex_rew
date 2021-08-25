@@ -1,0 +1,6 @@
+---
+
+- hosts: constructor_test
+  become: true
+  roles:
+    - constructor_test

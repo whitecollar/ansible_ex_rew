@@ -1,0 +1,19 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/fias-address-master
+deploy_name: fias-address-backend
+deploy_ports:
+  - 8080:8080
+
+app_dir: "{{ config_dir }}"
+
+elastic_host: puv-dev-int-fias-app.otr.ru 
+elastic_port: 9200
+
+env_port: "8080"
+psql_name: "postgres"
+psql_ip: "10.20.10.10"
+psql_port: "5432"
+psql_db_user: "puv"
+psql_db_name: "fias"
+psql_db_pass: "Oracle33"

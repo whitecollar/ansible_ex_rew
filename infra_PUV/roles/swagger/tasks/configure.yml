@@ -1,0 +1,27 @@
+
+# Создаём рабочую директорию Swagger
+- name: Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ db_directory }}/swagger-compose"
+    owner: root
+    group: root
+
+#  Копируем папку с конфигурационными файлами для запуска Nginx
+- name: Configure | Copy config files Nginx
+  copy:
+    src: "nginx"
+    dest: "{{ db_directory }}/swagger-compose"
+
+#  Копируем папку с конфигурационными файлами для запуска Swagger
+- name: Configure | Copy config files Swagger
+  copy:
+    src: "swagger"
+    dest: "{{ db_directory }}/swagger-compose"
+
+#  Копируем файл docker-compose.yml для запуска сервисов
+- name: Configure | Configure docker-compose.yml file
+  copy:
+    src: "docker-compose.yml"
+    dest: "{{ db_directory }}/swagger-compose"  
+

@@ -1,0 +1,81 @@
+{% if inventory_hostname not in groups['app_elk'] %}
+CONSUL_PORT={{ consul_port }}
+CONSUL_HOST={{ consul_host }}
+APP_SERVER={{ ansible_default_ipv4.address }}
+APP_PORT={{ env_port }}
+UFOS_LOGIN={{ ufos_login }}
+UFOS_PASSWORD={{ ufos_password }}
+REG_UFOS={{ ufos_reg }}
+ASSIGN_UFOS={{ ufos_assign }}
+NSI_UFOS={{ ufos_nsi }}
+KAFKA_SERVER={{ kafka_server }}:{{ kafka_port }}
+CONSTRUCTOR_URL={{ constructor_url }}
+{% endif %}
+{% if 'int-payment-app' in inventory_hostname %}
+SPRING_DATASOURCE_PASSWORD={{ psql_db_pass }}
+SPRING_DATASOURCE_URL={{ app_db }}
+SPRING_DATASOURCE_USERNAME={{ psql_db_user }}
+INTEGR_SERVICE_URL={{ payment_integr_url }}
+eld.url={{ eld_url }}
+ftp.host={{ ansible_default_ipv4.address }}
+{% endif %}
+{% if 'int-reg-app' in inventory_hostname %}
+ufos.url.host={{ ufos_reg }}
+ufos.url.reg-host={{ ufos_reg }}
+ufos.url.nsi-host={{ ufos_nsi }}
+spring.datasource.url={{ app_db }}
+spring.flyway.url={{ app_db }}
+{% endif %}
+{% if 'int-assign-app' in inventory_hostname %}
+ufos.reg={{ ufos_reg }}
+ufos.assign={{ ufos_assign }}
+ufos.nsi={{ ufos_nsi }}
+REDIS_HOST={{ redis_host }}
+REDIS_PORT={{ redis_port }}
+REDIS_LOGIN={{ redis_login }}
+REDIS_PASSWORD={{ redis_password }}
+REDIS_TOPIC={{ redis_topic }}
+{% endif %}
+{% if 'int-nsi-app' in inventory_hostname %}
+ufos.url.host={{ ufos_nsi }}
+REDIS_HOST={{ redis_host }}
+REDIS_PORT={{ redis_port }}
+REDIS_LOGIN={{ redis_login }}
+REDIS_PASSWORD={{ redis_password }}
+REDIS_TOPIC={{ redis_topic }}
+{% endif %}
+{% if 'int-constructor' in inventory_hostname %}
+ufos.url.host={{ ufos_nsi }}
+REDIS_HOST={{ redis_host }}
+REDIS_PORT={{ redis_port }}
+REDIS_LOGIN={{ redis_login }}
+REDIS_PASSWORD={{ redis_password }}
+REDIS_TOPIC={{ redis_topic }}
+{% endif %}
+{% if 'int-reg-app' in inventory_hostname %}
+REG_DB_PWD={{ db_password }}
+REG_DB_LOGIN={{ db_login }}
+REG_DB_PATH={{ db_path }}
+ufos.url.host={{ ufos_reg }}
+ufos.url.reg-host={{ ufos_reg }}
+ufos.url.nsi-host={{ ufos_nsi }}
+spring.datasource.url={{ app_db }}
+spring.flyway.url={{ app_db }}
+{% endif %}
+{% if 'int-auth-admin' in inventory_hostname %}
+SPRING_DATASOURCE_PASSWORD={{ spring_datasource_password }}
+SPRING_DATASOURCE_URL={{ spring_datasource_url }}
+SPRING_DATASOURCE_USERNAME={{ spring_datasource_username }}
+{% endif %}
+{% if 'int-spark' in inventory_hostname %}
+REDIS_HOST={{ redis_host }}
+REDIS_PORT={{ redis_port }}
+REDIS_LOGIN={{ redis_login }}
+REDIS_PASSWORD={{ redis_password }}
+REDIS_TOPIC={{ redis_topic }}
+{% endif %}
+{% if 'int-overpay-app' in inventory_hostname %}
+SPRING_DATASOURCE_URL=jdbc:postgresql://{{ psql_name }}:5432/{{ psql_db_name }}
+SPRING_DATASOURCE_USERNAME={{ psql_db_user }}
+SPRING_DATASOURCE_PASSWORD={{ psql_db_pass }}
+{% endif %}

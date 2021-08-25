@@ -1,0 +1,31 @@
+---
+
+# Копируем ключ для репозитория
+- name: Repository| Add key
+  copy:
+    src: "RPM-GPG-KEY-EPEL-7"
+    dest: "/etc/pki/rpm-gpg/"
+
+
+# Необходимо добавить проверку того, что уже есть в репозитории, если только 3 наших файла, то ничего не удалять.
+# Удаляем имеющиеся репозитории
+- name: Repository | Delete old repo
+  file:
+    path: "/etc/yum.repos.d/"
+    state: absent
+
+# Создаём директорию заново
+- name: Repository | Create repo
+  file:
+    path: "/etc/yum.repos.d/"
+    state: directory
+
+# Добавляем  репозитории
+- name: Repository| Add basic repo
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/yum.repos.d/"
+  with_items: 
+    - rhel72.repo
+    - epel.repo
+    - rhel72-archive.repo

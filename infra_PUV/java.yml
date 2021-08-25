@@ -1,0 +1,6 @@
+---
+
+- hosts: app:app_two
+  become: true
+  roles:
+    - java

@@ -1,0 +1,31 @@
+---
+
+# Создаём рабочую директорию
+- name: Proxy Configure | Create work dir
+  file:
+    state: directory
+    path: "{{ config_dir }}"
+
+- name: Proxy Configure | Clone && update a repo
+  git:
+    repo: "https://{{ deploy_registry_user }}:{{ deploy_registry_pass }}@dpr-gitlab.otr.ru/puv/{{ proxy_conf_repo }}.git"
+    dest: "{{ config_dir }}/{{ proxy_conf_repo }}"
+    clone: yes
+    update: yes
+
+- name: Proxy Configure | Copy file to nginx config dir
+  copy: 
+    src: "{{ config_dir }}/{{ proxy_conf_repo }}/{{ var_env }}.conf"
+    dest: "{{ nginx_conf_dir }}/{{ var_env }}.conf"
+    remote_src: yes
+    force: yes
+  register: nginx_config
+
+- name: Proxy Configure | Reload config
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: nginx_config.changed
+  ignore_errors: yes

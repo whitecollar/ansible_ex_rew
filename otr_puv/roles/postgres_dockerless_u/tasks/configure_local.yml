@@ -1,0 +1,74 @@
+---
+#  Копируем файл с паролем для инициализации кластера Postgres
+- name: Configure | Copy postgres pwd file
+  template:
+    src: "pgpwd.j2"
+    dest: "/tmp/pgpwd"
+    owner: postgres
+    group: postgres
+
+# Проверяем была ли уже ранее инициализация базы
+- name: Install | Check if PostgreSQL database is initialized.
+  stat:
+    path: "{{ app_dir }}/postgres/11/data/PG_VERSION"
+  register: pgdata_dir_version
+
+# Создаем начальную базу данных для работы Postgresql # postgres - k9bCqXhxFkRmDegQ
+- name: Install | Start command /usr/pgsql-11/bin/initdb --pgdata
+  command: "/usr/pgsql-11/bin/initdb --pgdata {{ app_dir }}/postgres/11/data --encoding=UTF8 --locale=en_US.UTF-8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8 --username={{ local_pg_user }} --pwfile=/tmp/pgpwd --auth-host=md5 --auth=md5 --auth-local=md5"
+  when: not pgdata_dir_version.stat.exists
+  become: true
+  become_user: postgres
+
+# После инициализации кластера, удаляем файл с паролем
+- name: Install | Remove postgres pwd file (delete file)
+  file:
+    path: /tmp/pgpwd
+    state: absent
+
+# Заменяем в сервисе Systemd папку хранения данных по умолчанию на нужную нам
+- name: Configure | Set postgrespro-std-11 PGDATA
+  lineinfile:
+    path: /usr/lib/systemd/system/postgresql-11.service
+    regexp: '^Environment=PGDATA=/var/lib/pgsql/11/data/'
+    line: 'Environment=PGDATA={{ app_dir }}/postgres/11/data'
+
+# Перезапускаем systemd сервис, для применения изменений выше
+- name: Configure | reload systemd
+  become: true
+  become_user: root
+  command: systemctl daemon-reload
+
+# Меняем в файле конфигурации листинг сервиса
+- name: Configure | Set postgres-11 listen address
+  lineinfile:
+    path: "{{ app_dir }}/postgres/11/data/postgresql.conf"
+    regexp: "#listen_addresses = 'localhost'"
+    line: "listen_addresses = '*'"
+
+# Меняем папку сокета postgres
+- name: Configure | Set postgres-11 socket directory
+  lineinfile:
+    path: "{{ app_dir }}/postgres/11/data/postgresql.conf"
+    regexp: "#unix_socket_directories = '/var/run/postgresql, /tmp'"
+    line: "unix_socket_directories = '/var/run/postgresql'"
+
+# Меняем права на сокет
+- name: Configure | Set permissions  socket
+  lineinfile:
+    path: "{{ app_dir }}/postgres/11/data/postgresql.conf"
+    regexp: "#unix_socket_permissions = 0777"
+    line: "unix_socket_permissions = 0777"
+
+# Указываем схему по умолчанию
+- name: Configure | Set default search path ufos
+  lineinfile:
+    path: "{{ app_dir }}/postgres/11/data/postgresql.conf"
+    regexp: "#search_path = '\"$user\", public'"
+    line: "search_path = {{ local_db_schema }}"
+
+# Перезапускаем сервис Postgres 11
+- name: Configure | Restart postgresql-11 service
+  service:
+    name: postgresql-11
+    state: restarted

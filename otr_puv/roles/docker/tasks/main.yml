@@ -1,0 +1,8 @@
+---
+
+### rhel-7-server-extras-rpms необходим для установки container-selinux для установки docker ###
+- include: docker_configure.yml
+
+- include: docker_install.yml
+
+- include: docker-compose_install.yml

@@ -1,0 +1,22 @@
+---
+
+# Останавливаем контейнер.
+- name: Docker compose up| Stop a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    state: stopped
+    timeout: 600
+
+# Удаляем контейнер.
+- name: Docker compose up | Delete a container
+  docker_container:
+    name: "{{ deploy_name }}"
+    state: absent
+    timeout: 600
+
+#  Запуск сервисов через docker-compose
+- name: Docker compose up | Docker compose up
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    state: present
+    pull: no

@@ -1,0 +1,6 @@
+---
+
+- hosts: compose_app:compose_app_two:compose_app_three
+  become: true
+  roles:
+    - deploy_compose

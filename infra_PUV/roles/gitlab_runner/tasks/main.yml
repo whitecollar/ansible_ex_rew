@@ -1,0 +1,22 @@
+---
+
+- include: configure.yml
+  tags:
+    - first
+    - second
+
+- include: docker-compose_up.yml
+  tags:
+    - first
+    - second
+
+- include: registration.yml
+  when: create_work_dir.changed
+
+- include: update_config.yml
+  when: create_work_dir.changed
+
+- include: cron_tasks.yml
+  tags:
+    - first
+    - second

@@ -1,0 +1,24 @@
+---
+
+# Скачиваем ФИАС с сайта
+# Ссылка меняется, как сделать оптимально пока не ясно
+- name: Download Fias | Download FIAS
+  get_url:
+    url: https://fias-file.nalog.ru/ExportDownloads?file=aae16023-b04d-46a1-9027-159f43a56686
+    dest: "{{ app_dir }}/fias_xml.zip"
+    tmp_dest: "{{ app_dir }}"
+    remote_src: yes
+
+# Разархивируем ФИАС
+- name: Download Fias | Unarchive FIAS
+  unarchive:
+    src: "{{ app_dir }}/fias_xml.zip"
+    dest: "{{ app_dir }}/fias_xml"
+    remote_src: yes
+  register: unarch_fias
+
+# Удаляем скаченный файл
+- name: Download Fias | Delete archive
+  file:
+    path: "{{ app_dir }}/fias_xml.zip"
+    state: absent

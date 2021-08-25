@@ -1,0 +1,38 @@
+---
+
+# Создаём рабочую директорию
+- name: Configure | Create work directory
+  file: 
+    state: directory
+    path: "{{ db_directory }}/infra-gitlab/"
+    
+# Создаём рабочую директорию самого раннера
+- name: Configure | Create work directory for runner
+  file: 
+    state: directory
+    path: "{{ db_directory }}/infra-gitlab/gitlab-runner/"
+  
+# Создаём директорию для конфигурации
+- name: Configure | Create directory for configs
+  file: 
+    state: directory
+    path: "{{ db_directory }}/infra-gitlab/gitlab/"
+
+# Создаём директорию для бэкапов
+- name: Configure | Create directory for backups
+  file: 
+    state: directory
+    path: "{{ db_directory }}/infra-gitlab/gitlab_backups/"
+    
+# Копируем файл для запуска контейнера
+- name: Configure | Copy docker-compose
+  copy:
+    src: "docker-compose.yml"
+    dest: "{{ db_directory }}/infra-gitlab/"
+    
+# Копируем сертификаты
+- name: Configure | Copy certs
+  copy:
+    src: "certs"
+    dest: "{{ db_directory }}/infra-gitlab/"
+    

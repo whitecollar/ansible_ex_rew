@@ -1,0 +1,19 @@
+
+# Создаём необходимые для работы директорию
+- name: Configure | Create work dir 
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+  loop:
+    - "{{ app_dir }}/kafka/zkdata"
+    - "{{ app_dir }}/kafka/zkdatalog"
+    - "{{ app_dir }}/kafka/kafdata"
+
+#  Копируем папку с необходимыми файлами для запуска контейнера
+- name: Configure | copy compose 
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ app_dir }}/kafka/docker-compose.yml"
+    mode: 0644

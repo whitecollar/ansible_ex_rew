@@ -1,0 +1,99 @@
+# Создаем группу для пользователя
+- name: Configure  | Create group
+  ansible.builtin.group:
+    name: nifi
+    state: present
+
+# Создаём пользователя для удалённого подключения
+- name: Configure  | Create user
+  user:
+    name: nifi
+    home: /home/nifi
+    groups: nifi, users, wheel
+    append: true
+    shell: "/bin/bash"
+    state: present
+
+# Создаём рабочую директорию
+- name: Configure | Create work dir 
+  file:
+    state: directory
+    path: "{{ item }}"
+    mode: 0777
+    owner: nifi
+    group: nifi
+  loop:
+    - "{{ app_dir }}"
+    - "{{ app_dir }}/nifi"
+    - "{{ app_dir }}/nifi/conf"
+    # - "{{ app_dir }}/nifi/content_repository"
+    # - "{{ app_dir }}/nifi/debug_logs"
+    # - "{{ app_dir }}/nifi/DistributedMapCacheServer_PersistenceDirs"
+    # - "{{ app_dir }}/nifi/flowfile_repository"
+    - "{{ app_dir }}/nifi/debug_logs"
+    # - "{{ app_dir }}/nifi/flow_repository"
+    - "{{ app_dir }}/nifi/logs"
+
+# РАЗОБРАТЬСЯ И ИСПРАВИТЬ ЭТО ГОВНО С ПРАВАМИ!!!
+# Есть подозрение, что если в исходном докерфайле реджистри в конце юзера сменить на root, то будет нормально работать
+# Контейнер с найфаем по такому принципу нормально работает
+# USER root
+# Создаём рабочую директорию
+- name: Configure | Create work dir 
+  file:
+    state: directory
+    path: "{{ item }}"
+    mode: 0777
+    owner: nifi
+    group: nifi
+  loop:
+    - "{{ app_dir }}/nifi-registry"
+    - "{{ app_dir }}/nifi-registry/conf"
+    # - "{{ app_dir }}/nifi-registry/database"
+    - "{{ app_dir }}/nifi-registry/logs"
+
+#  Копируем шаблон на хост
+- name: Configure | Copy template
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ app_dir }}/docker-compose.yml"
+    mode: 0644
+
+# Копируем на хост переменные
+- name: Configure | Copy environment
+  template:
+    src: ".env.j2"
+    dest: "{{ app_dir }}/nifi/.env"
+    mode: 0664
+  tags:
+  - environment
+
+# Копируем на хост конфиг nifi
+# Копируем все файлы, вытащенные из контейнера, потому что скрипты запуска оперируют файлом, заменяя его
+# Подключить файл, как волюм в такой ситуации нельзя, т.к. меняется индексный дескриптор файла, что для волюма докера не приемлемо
+- name: Configure | Copy nifi.properties
+  copy:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/nifi/conf"
+    mode: 0777
+    owner: nifi
+    group: nifi
+  with_fileglob:
+    - nifi/*
+
+# РАЗОБРАТЬСЯ И ИСПРАВИТЬ ЭТО ГОВНО С ПРАВАМИ!!!
+# Есть подозрение, что если в исходном докерфайле реджистри в конце юзера сменить на root, то будет нормально работать
+# Контейнер с найфаем по такому принципу нормально работает
+# USER root
+# Копируем на хост конфиг registry
+#  Копируем все файлы, вытащенные из контейнера, потому что скрипты запуска оперируют файлом, заменяя его
+# Подключить файл, как волюм в такой ситуации нельзя, т.к. меняется индексный дескриптор файла, что для волюма докера не приемлемо
+- name: Configure | Copy nifi-registry.properties
+  copy:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/nifi-registry/conf"
+    mode: 0777
+    owner: nifi
+    group: nifi
+  with_fileglob:
+    - nifi-registry/*

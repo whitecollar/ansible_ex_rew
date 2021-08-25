@@ -1,0 +1,141 @@
+stages:
+  - build-image
+  - auto-deploy
+
+.build-image:
+  stage: build-image
+  tags:
+    - projects_puv
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u"$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - docker build --build-arg config_name=$NGINX_CONFIG --pull -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+  
+build-image-dev:
+  extends: .build-image
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - dev.conf
+  variables:
+    NGINX_CONFIG: dev
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+build-image-test:
+  extends: .build-image
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - test.conf
+  variables:
+    NGINX_CONFIG: test
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+build-image-test-2:
+  extends: .build-image
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - test2.conf
+  variables:
+    NGINX_CONFIG: test2
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+build-image-prom-stage:
+  extends: .build-image
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - prom-stage.conf
+  variables:
+    NGINX_CONFIG: prom-stage
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+.deploy:
+  stage: auto-deploy
+  tags:
+    - projects_puv
+  image: $ANSIBLE_IMAGE
+  before_script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+  # Запускаем ssh-agent
+    - eval $(ssh-agent -s)
+  # Создаём директорию для закрытого ключа
+    - mkdir -p ~/.ssh
+  # Выставляем права доступа для директории
+    - chmod 700 ~/.ssh
+  # Копируем закрытый ключ
+    - cp $SSH_PRIVATE_KEY ~/.ssh/id_rsa
+  # Выставляем права закрытому ключу
+    - chmod 600 ~/.ssh/id_rsa
+  # Передаём ключ ssh-aget'у
+    - ssh-add ~/.ssh/id_rsa
+    # Подключаемся к текущему репозиторию гитлаба 
+    - git remote set-url origin https://$GIT_USER:$GIT_PASS@$PROJECT_URL
+    # Задаём e-mail пользователя для дальнейших изменений
+    - git config --global user.email "$GIT_EMAIL_USER"
+    # Задаём имя пользователя для дальнейших изменений
+    - git config --global user.name "$GIT_USER"
+    # Обновляем сабмодуль, чтобы подтянуть новые изменения
+    - git submodule update --init --recursive --remote
+  script:
+    - ansible-playbook -i $INVENTORIES $PATH_TO_SUBMODULE/ansible/$DOCKER_STATE.yml --tags "${ANSIBLE_TAG}"  --extra-vars "deploy_host=$VARIABLE_HOST deploy_image=$IMAGE_TAG deploy_registry_pass=$TOKEN_FOR_DEPLOY"
+
+# Выполняем запрос на деплой
+auto-deploy-dev:
+  extends: .deploy
+  needs:
+    - job: build-image-dev
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - dev.conf
+  variables: 
+    NGINX_CONFIG: dev
+    INVENTORIES: $PATH_TO_SUBMODULE/ansible/inventories/dev/hosts
+    VARIABLE_HOST: $HOST_DEV
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+auto-deploy-test:
+  extends: .deploy
+  needs:
+    - job: build-image-test
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - test.conf
+  variables:
+    NGINX_CONFIG: test
+    INVENTORIES: $PATH_TO_SUBMODULE/ansible/inventories/test/hosts
+    VARIABLE_HOST: $HOST_TEST
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+auto-deploy-test-2:
+  extends: .deploy
+  needs:
+    - job: build-image-test-2
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+    changes:
+      - test2.conf
+  variables: 
+    NGINX_CONFIG: test2
+    INVENTORIES: $PATH_TO_SUBMODULE/ansible/inventories/test2/hosts
+    VARIABLE_HOST: $HOST_TEST2
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG
+
+# auto-deploy-prom-stage:
+#   extends: .deploy
+#    needs:
+#      - job: build-image-prom-stage
+#    
+#   rules:
+#   - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+#     changes:
+#       - prom-stage.conf
+#   variables: 
+#     NGINX_CONFIG: dev
+#     INVENTORIES: $PATH_TO_SUBMODULE/ansible/inventories/prom-stage/hosts
+#     VARIABLE_HOST: $HOST_PROM_STAGE
+#     IMAGE_TAG: $CI_REGISTRY_IMAGE:$NGINX_CONFIG

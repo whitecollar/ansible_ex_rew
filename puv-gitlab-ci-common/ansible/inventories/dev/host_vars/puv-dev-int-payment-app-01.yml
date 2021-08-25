@@ -1,0 +1,11 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/payment-app
+deploy_name: payment-backend
+deploy_ports:
+  - 18080:18080
+  - 8500:8500
+  - 5006:5005
+deploy_volumes:
+  - "{{ app_dir }}/logs/:/app/log"
+

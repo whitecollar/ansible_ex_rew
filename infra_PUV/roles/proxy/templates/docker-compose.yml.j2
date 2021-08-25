@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  nginx:
+    image: {{ deploy_registry_image }}:{{ deploy_branch }}
+    container_name: {{ deploy_name }}
+    hostname: {{ deploy_name }}
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+    networks:
+      - dpr-nginx-net
+    ports:
+    - "{{ deploy_ports }}"
+    volumes:
+      - {{ deploy_volumes }}
+    restart: unless-stopped
+
+networks:
+    dpr-nginx-net:
+      driver: bridge
+      driver_opts:
+        com.docker.network.enable_ipv6: "false"
+      ipam:
+        driver: default
+        config:
+          - subnet: 10.20.10.0/24
+            gateway: 10.20.10.1

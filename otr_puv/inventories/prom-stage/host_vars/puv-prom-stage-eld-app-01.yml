@@ -1,0 +1,10 @@
+---
+
+artifacts_name: personals
+
+env_port: "8080"
+psql_name: "puv-prom-stage-int-eld-gp-master"
+psql_db_user: "puv"
+psql_db_pass: "Oracle33"
+psql_db_name: "personals"
+psql_pg_pass: "Oracle13"

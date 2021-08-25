@@ -1,0 +1,28 @@
+---
+# Логинимся на наш реджистри
+- name: Docker Images | Log into private registry and force re-authorization
+  docker_login:
+    registry: "{{ deploy_registry_url }}"
+    username: "{{ deploy_registry_user }}"
+    password: "{{ deploy_registry_pass }}"
+    reauthorize: true
+  no_log: false
+  changed_when: false
+  ignore_errors: yes
+
+#  Запуск сервисов Nginx через docker-compose
+- name: Install | Docker compose restart
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    remove_orphans: true
+    state: absent
+    pull: no
+  when: update_conf.changed
+
+#  Запуск сервисов Nginx через docker-compose
+- name: Install | Docker compose up
+  docker_compose:
+    project_src: "{{ app_dir }}"
+    remove_orphans: true
+    state: present
+    pull: no

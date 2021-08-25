@@ -1,0 +1,14 @@
+---
+
+# Апгрейдим pip
+# На RHEL 7.2 сломает всё нафиг, там не обновляем.
+- name: install the package, force upgrade
+  pip: 
+    name: pip
+    extra_args: --upgrade
+  when: ansible_os_family == "CentOS"
+
+# Устанавливаем пакеты python для модулей ansible
+- name: Install pip packages
+  pip:
+    name: "{{ pip_pkgs }}"

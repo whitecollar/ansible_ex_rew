@@ -1,0 +1,17 @@
+---
+
+# Устанавливаем необходимые пакеты
+- name: Software | Install base pkgs
+  yum:
+    name: "{{ base_pkgs }}"
+    state: installed
+    update_cache: true
+
+# Апгрейдим pip
+- name: Software | Upgrade pip
+  shell: "pip install --upgrade pip"
+
+# Устанавливаем пакеты python для модулей ansible
+- name: Software | Install pip packages ipaddress
+  pip:
+    name: "{{ pip_pkgs }}"

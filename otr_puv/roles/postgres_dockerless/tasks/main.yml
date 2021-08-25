@@ -1,0 +1,7 @@
+---
+
+ - include: repository.yml
+ - include: install.yml
+ - include: configure_local.yml
+# Не работает, надо бы разобрать и сделать рабочим. Из-за заявки типа блокер - не было исправлено.
+#  - include: initialization_base.yml

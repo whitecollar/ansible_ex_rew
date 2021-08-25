@@ -1,0 +1,6 @@
+---
+
+- hosts: fias
+  become: true
+  roles:
+    - fias

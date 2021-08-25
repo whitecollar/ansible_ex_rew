@@ -1,0 +1,6 @@
+---
+
+- hosts: s3-app
+  become: true
+  roles:
+    - s3-app

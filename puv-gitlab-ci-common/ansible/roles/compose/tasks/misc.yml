@@ -1,0 +1,12 @@
+---
+
+# Разобраться с дополнительными модулями для ансибла, добавить их в докерфайл ранера.
+# https://dpr-gitlab.otr.ru/admins/dockerfiles/-/tree/master/ansible
+# Пока что не работает, запускается руками Кусковым Романом.
+# Разобраться и научиься запускать.
+- name: Misc | Script for init nifi
+  shell: "docker exec -ti {{ deploy_name }} /opt/nifi/puv-integration-flows/init_nifi.sh -t /opt/nifi/nifi-toolkit-current --nifi-url {{ nifi_url }} --registry-url {{ nifi_registry_url }}"
+  delegate_to: "{{ inventory_hostname }}"
+  tags:
+    - nifi
+    

@@ -1,0 +1,10 @@
+---
+local_pg_user: postgres
+local_pg_password: Oracle13
+local_pg_role_attr_flags: NOSUPERUSER,LOGIN # NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN
+local_db_user: puv
+local_db_name: migration
+local_db_password: md588f6b734ed79e764f708d7a92c3a7899
+source_ip_networks: 172.22.252.0
+ip_mask: 24
+auth_method: md5

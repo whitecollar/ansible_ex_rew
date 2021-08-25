@@ -1,0 +1,9 @@
+---
+#  Запуск сервисов redis через docker-compose
+- name: Install | Docker compose up Redis
+  docker_compose:
+    project_src: "{{ redis_dir }}" 
+    remove_orphans: true
+    state: present
+    recreate: always
+    pull: yes

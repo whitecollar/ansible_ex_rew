@@ -1,0 +1,9 @@
+---
+
+  - include: docker-env.yml
+  - include: docker-images.yml
+  # Если изображение обновилось, то выполняем обновление контейнера.
+  - include: docker-update.yml
+  - include: docker-prune.yml
+    when: images_pull_result.changed or images_pull_result_2.changed or images_pull_result_3.changed
+    

@@ -1,0 +1,91 @@
+version: '2'
+#https://hub.docker.com/r/bitnami/zookeeper
+services:
+  zookeeper:
+    hostname: zookeeper
+    container_name: zookeeper
+    image: 'registry-dpr-gitlab.otr.ru:5005/admins/dockerfiles:zookeeper'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - 2181:2181
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+    dns_search:
+      - otr.ru
+    networks:
+      nifi-net:
+        ipv4_address: 10.20.20.2
+    restart: unless-stopped
+
+  nifi-registry:
+    image: 'registry-dpr-gitlab.otr.ru:5005/puv/puv-docker-images:apache-nifi-registry'
+    container_name: apache_nifi_registry
+    hostname: {{ inventory_hostname }}
+    ports:
+      - 18080:18080
+    volumes:
+      - {{ app_dir}}/nifi-registry/conf:/opt/nifi-registry/nifi-registry-current/conf:rw
+      - {{ app_dir}}/nifi-registry/logs/:/opt/nifi-registry/nifi-registry-current/logs:rw
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+    dns_search:
+      - otr.ru
+    networks:
+      nifi-net:
+        ipv4_address: 10.20.20.3
+    restart: unless-stopped
+
+  nifi:
+    #https://hub.docker.com/r/apache/nifi
+    image: {{ deploy_registry_image }}:{{ deploy_branch }}
+    container_name: {{ deploy_name }}
+    hostname: {{ inventory_hostname }}
+    env_file:
+      - {{ app_dir }}/nifi/.env
+    ports:
+      - 8080:8080
+      - 8443:8443
+      - 8000:8000
+      - 10000:10000
+      - 9087:9087
+      - 9088:9088
+    volumes: 
+      - {{ app_dir }}/nifi/conf/:/opt/nifi/nifi-current/conf:rw
+      - {{ app_dir }}/logs/:/app/log:rw
+#
+# Раскомментировать после того, как будет понятно, как правильно стопать сам сервис nifi внутри докера
+#
+
+#      - {{ app_dir }}/nifi/content_repository/:/opt/nifi/nifi-current/content_repository:rw
+#      - {{ app_dir }}/nifi/flowfile_repository/:/opt/nifi/nifi-current/flowfile_repository:rw
+#      - {{ app_dir }}/nifi/provenance_repository/:/opt/nifi/nifi-current/provenance_repository:rw
+      - {{ app_dir }}/nifi/debug_logs/:/opt/nifi/nifi-current/debug_logs:rw
+#      - {{ app_dir }}/nifi/DistributedMapCacheServer_PersistenceDirs/:/opt/nifi/nifi-current/DistributedMapCacheServer_PersistenceDirs:rw
+      - {{ app_dir }}/nifi/logs/:/opt/nifi/nifi-current/logs:rw
+#      - {{ app_dir }}/nifi/flow_repository/:/opt/nifi/nifi-current/flow_repository:rw
+    dns:
+      - 172.31.2.113
+      - 172.31.4.4
+      - 172.31.198.254
+    dns_search:
+      - otr.ru
+    networks:
+      nifi-net:
+        ipv4_address: 10.20.20.4
+    restart: unless-stopped
+
+networks:
+    nifi-net:
+       driver: bridge
+       driver_opts:
+          com.docker.network.enable_ipv6: "false"
+       ipam:
+          driver: default
+          config:
+            - subnet: 10.20.20.0/24
+              gateway: 10.20.20.1

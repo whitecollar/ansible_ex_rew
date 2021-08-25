@@ -1,0 +1,15 @@
+---
+
+# Регистрируем раннер на сервере гитлаба.
+# Описание переменных тут ../defaults/main.yml
+# Все dns и dns_search должны указваться по 1
+- name: Rigistration | Registered runner on gitlab-server
+  shell: 'docker exec -ti gitlab-runner gitlab-runner register --non-interactive --executor "docker" --docker-image "docker:dind" --url "https://infra-gitlab.otr.ru/ci" --registration-token "JUyFZgszq65yhZZxWVpG" --description "docker in docker" --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" --run-untagged="true" --locked="false" --docker-privileged --docker-dns "172.31.2.113,172.31.4.4,172.31.198.254,172.31.197.248,172.31.197.212" --docker-dns-search "pds.otr.ru,otr.ru"'
+
+# Добавить второй раннер
+# Создать юзера gitlab-runner и групуу nogroup для .ssh
+# Назначить этого юзера владельцем
+
+# Добавить 10 одновременных job в конфиг
+# Файл config.toml 
+# Строка concurrent = 10

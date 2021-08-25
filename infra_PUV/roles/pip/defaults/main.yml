@@ -1,0 +1,8 @@
+---
+
+# Пакеты python для модулей ansible
+pip_pkgs:
+  - requests
+  - ipaddress
+  - docker-compose
+  - pexpect

@@ -1,0 +1,8 @@
+---
+
+deploy_registry_image: registry-dpr-gitlab.otr.ru:5005/puv/int-eld-drools
+deploy_name: drools-backend
+deploy_ports:
+  - 8090:8080
+
+env_port: "8090"

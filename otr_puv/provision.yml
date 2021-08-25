@@ -1,0 +1,19 @@
+---
+
+# Для разворачивания новой среды
+- import_playbook: init.yml
+- import_playbook: pip.yml
+- import_playbook: docker.yml
+- import_playbook: gitlab_runner.yml
+- import_playbook: postgres.yml
+- import_playbook: postgres_ext.yml
+- import_playbook: consul.yml
+- import_playbook: apache_spark.yml
+- import_playbook: auth-admin.yml
+- import_playbook: fias.yml
+- import_playbook: personals.yml
+- import_playbook: proxy.yml
+- import_playbook: deploy.yml
+- import_playbook: portainer.yml
+- import_playbook: status_page.yml
+- import_playbook: webtail_logs.yml

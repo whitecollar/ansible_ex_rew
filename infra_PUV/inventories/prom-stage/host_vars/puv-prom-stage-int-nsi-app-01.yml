@@ -1,0 +1,15 @@
+---
+
+artifacts_name: nsi
+artifacts_name_2: nsi-ufos
+
+env_port: 18080
+env_port_2: 18081
+
+db_login: puv
+db_password: Oracle33
+
+db_ufos_host_prop: "jdbc:postgresql://puv-prom-stage-int-nsi-db:5432/nsi_bos"
+
+XMX: 4096m
+JAVA_ARGS: ""

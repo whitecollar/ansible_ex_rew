@@ -1,0 +1,8 @@
+---
+
+# Запускаем nginx и делаем ему автостарт
+- name: Configure | Start && Enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes

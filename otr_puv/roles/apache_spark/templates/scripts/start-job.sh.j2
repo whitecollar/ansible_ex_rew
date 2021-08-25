@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# 1 - имя воркера
+# 2 - имя файла джобы вместе с полным путём
+# 3 - имя файла для хранения ID, который будем удалять при редеплое
+
+docker exec -ti $1 spark-submit --class com.otr.puv.spark.Application \
+            --master {{ master_url }} \
+            --driver-memory 1g \
+            --executor-memory 1g \
+            --executor-cores 1 \
+            --total-executor-cores 2 \
+            --deploy-mode cluster \
+            --driver-java-options "-Dfile.encoding=UTF-8" \
+            --conf spark.driver.bindAddress="{{ inventory_hostname }}" \
+            --verbose $2 > $3 2>&1

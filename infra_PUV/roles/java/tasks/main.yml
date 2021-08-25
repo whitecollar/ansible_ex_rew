@@ -1,0 +1,10 @@
+---
+
+  - include: install_java8.yml
+    when: inventory_hostname in groups['app_two']
+  - include: create_systemd_java8.yml
+    when: inventory_hostname in groups['app_two']
+  - include: install_java11.yml
+  - include: create_systemd_java11.yml
+  # - include: create_systemd_java11_2.yml
+  #   when: "'eld-app' in inventory_hostname"

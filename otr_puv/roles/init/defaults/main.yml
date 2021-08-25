@@ -1,0 +1,73 @@
+---
+
+# Набор необходимого программного обеспечения
+base_pkgs:
+  - tzdata
+  - python-devel
+  - python-pip
+  - yum-utils
+  - nfs-utils
+  - device-mapper-persistent-data
+  - lvm2
+  - gcc
+  - glibc
+  - glibc-common
+  - gd
+  - bridge-utils
+  - NetworkManager-glib
+  - NetworkManager-libnm
+  - nm-connection-editor.x86_64
+  - dbus
+  - libsemanage-python
+  - policycoreutils-python
+# Пакеты для обслуживания
+  - atop
+  - bash-completion
+  - bind-utils
+  - curl
+  - dos2unix
+  - htop
+  - unzip
+  - iotop
+  - nano
+  - net-tools
+  - telnet
+  - vim
+  - wget
+  - tar
+  - rsync
+  - mc
+  - git
+
+# Набор необходимого программного обеспечения
+base_pkgs_8:
+  - tzdata
+  - yum-utils
+  - nfs-utils
+  - device-mapper-persistent-data
+  - lvm2
+  - gcc
+  - glibc
+  - glibc-common
+  - gd
+  - NetworkManager-libnm
+  - nm-connection-editor.x86_64
+  - dbus
+# Пакеты для обслуживания
+  - atop
+  - bash-completion
+  - bind-utils
+  - curl
+  - dos2unix
+  - htop
+  - unzip
+  - iotop
+  - nano
+  - net-tools
+  - telnet
+  - vim
+  - wget
+  - tar
+  - rsync
+  - mc
+  - git

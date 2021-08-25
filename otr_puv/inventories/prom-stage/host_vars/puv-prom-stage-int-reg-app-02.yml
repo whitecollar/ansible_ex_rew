@@ -1,0 +1,18 @@
+---
+
+artifacts_name: reg
+artifacts_name_2: reg-ufos
+
+env_port: 18080
+env_port_2: 18081
+
+app_db: jdbc:postgresql://puv-prom-stage-int-reg-db-02:5432/reg_bos
+
+db_login: puv
+db_password: Oracle33
+db_path: puv-{{ var_env }}-int-reg-db-02
+
+db_ufos_host_prop: "jdbc:postgresql://puv-prom-stage-int-reg-db-02:5432/reg_bos"
+
+XMX: 4096m
+JAVA_ARGS: ""
